@@ -15,12 +15,13 @@ class Trip {
    **/
   static async create(data) {
     const result = await db.query(
-          `INSERT INTO trips (username,
+          `INSERT INTO trips (name,
+                              username,
                               location_id,
                               start_date,
                               end_date,
                               budget)
-           VALUES ($1, $2, $3, $4, $5)
+           VALUES ($1, $2, $3, $4, $5, $6)
            RETURNING trip_id AS "tripId", username, location_id AS "locationId", start_date AS "startDate", end_date AS "endDate", budget`,
         [
           data.userId,
@@ -37,14 +38,16 @@ class Trip {
   /** Find all trips (optional filter on searchFilters).
    *
    * searchFilters (all optional):
+   * - name
    * - userId
    * - locationId
    *
    * Returns [{ tripId, userId, locationId, startDate, endDate, budget }, ...]
    * */
-  static async findAll({ userId, locationId } = {}) {
-    let query = `SELECT trip_id AS "tripId",
-                        username AS "userId",
+  static async findAll({ name, username, locationId } = {}) {
+    let query = `SELECT name,
+                        trip_id AS "tripId",
+                        username,
                         location_id AS "locationId",
                         start_date AS "startDate",
                         end_date AS "endDate",
@@ -53,8 +56,13 @@ class Trip {
     let whereExpressions = [];
     let queryValues = [];
 
-    if (userId !== undefined) {
-      queryValues.push(userId);
+    if (name !== undefined) {
+      queryValues.push(name);
+      whereExpressions.push(`name = $${queryValues.length}`);
+    }
+
+    if (username !== undefined) {
+      queryValues.push(username);
       whereExpressions.push(`username = $${queryValues.length}`);
     }
 
@@ -74,14 +82,15 @@ class Trip {
 
   /** Given a trip id, return data about trip.
    *
-   * Returns { tripId, userId, locationId, startDate, endDate, budget }
+   * Returns { tripId, name, username, locationId, startDate, endDate, budget }
    *
    * Throws NotFoundError if not found.
    **/
   static async get(id) {
     const tripRes = await db.query(
           `SELECT trip_id AS "tripId",
-                  username AS "userId",
+                  name,
+                  username,
                   location_id AS "locationId",
                   start_date AS "startDate",
                   end_date AS "endDate",
@@ -100,9 +109,9 @@ class Trip {
    *
    * This is a "partial update" --- only changes provided fields.
    *
-   * Data can include: { locationId, startDate, endDate, budget }
+   * Data can include: { name, locationId, startDate, endDate, budget }
    *
-   * Returns { tripId, userId, locationId, startDate, endDate, budget }
+   * Returns { tripId, name, username, locationId, startDate, endDate, budget }
    *
    * Throws NotFoundError if not found.
    */
@@ -112,13 +121,14 @@ class Trip {
         {});
     const idVarIdx = "$" + (values.length + 1);
 
-    const querySql = `UPDATE trips 
+    const querySql = `UPDATE trips
                       SET ${setCols} 
-                      WHERE trip_id = ${idVarIdx} 
-                      RETURNING trip_id AS "tripId", 
-                                username AS "userId", 
-                                location_id AS "locationId", 
-                                start_date AS "startDate", 
+                      WHERE trip_id = ${idVarIdx}
+                      RETURNING trip_id AS "tripId",
+                                name,
+                                username,
+                                location_id AS "locationId",
+                                start_date AS "startDate",
                                 end_date AS "endDate",
                                 budget`;
     const result = await db.query(querySql, [...values, id]);
