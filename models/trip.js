@@ -9,19 +9,19 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 class Trip {
   /** Create a trip (from data), update db, return new trip data.
    *
-   * data should be { userId, locationId, startDate, endDate, budget }
+   * data should be { username, locationId, startDate, endDate, budget }
    *
    * Returns { tripId, userId, locationId, startDate, endDate, budget }
    **/
   static async create(data) {
     const result = await db.query(
-          `INSERT INTO trips (user_id,
+          `INSERT INTO trips (username,
                               location_id,
                               start_date,
                               end_date,
                               budget)
            VALUES ($1, $2, $3, $4, $5)
-           RETURNING trip_id AS "tripId", user_id AS "userId", location_id AS "locationId", start_date AS "startDate", end_date AS "endDate", budget`,
+           RETURNING trip_id AS "tripId", username, location_id AS "locationId", start_date AS "startDate", end_date AS "endDate", budget`,
         [
           data.userId,
           data.locationId,
@@ -44,7 +44,7 @@ class Trip {
    * */
   static async findAll({ userId, locationId } = {}) {
     let query = `SELECT trip_id AS "tripId",
-                        user_id AS "userId",
+                        username AS "userId",
                         location_id AS "locationId",
                         start_date AS "startDate",
                         end_date AS "endDate",
@@ -55,7 +55,7 @@ class Trip {
 
     if (userId !== undefined) {
       queryValues.push(userId);
-      whereExpressions.push(`user_id = $${queryValues.length}`);
+      whereExpressions.push(`username = $${queryValues.length}`);
     }
 
     if (locationId !== undefined) {
@@ -81,7 +81,7 @@ class Trip {
   static async get(id) {
     const tripRes = await db.query(
           `SELECT trip_id AS "tripId",
-                  user_id AS "userId",
+                  username AS "userId",
                   location_id AS "locationId",
                   start_date AS "startDate",
                   end_date AS "endDate",
@@ -116,7 +116,7 @@ class Trip {
                       SET ${setCols} 
                       WHERE trip_id = ${idVarIdx} 
                       RETURNING trip_id AS "tripId", 
-                                user_id AS "userId", 
+                                username AS "userId", 
                                 location_id AS "locationId", 
                                 start_date AS "startDate", 
                                 end_date AS "endDate",
