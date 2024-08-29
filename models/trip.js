@@ -11,7 +11,7 @@ class Trip {
    *
    * data should be { username, locationId, startDate, endDate, budget }
    *
-   * Returns { tripId, userId, locationId, startDate, endDate, budget }
+   * Returns { tripId, username, locationId, startDate, endDate, budget }
    **/
   static async create(data) {
     const result = await db.query(
@@ -24,7 +24,8 @@ class Trip {
            VALUES ($1, $2, $3, $4, $5, $6)
            RETURNING trip_id AS "tripId", username, location_id AS "locationId", start_date AS "startDate", end_date AS "endDate", budget`,
         [
-          data.userId,
+          data.name,
+          data.username,
           data.locationId,
           data.startDate,
           data.endDate,
@@ -39,10 +40,10 @@ class Trip {
    *
    * searchFilters (all optional):
    * - name
-   * - userId
+   * - username
    * - locationId
    *
-   * Returns [{ tripId, userId, locationId, startDate, endDate, budget }, ...]
+   * Returns [{ tripId, username, locationId, startDate, endDate, budget }, ...]
    * */
   static async findAll({ name, username, locationId } = {}) {
     let query = `SELECT name,
