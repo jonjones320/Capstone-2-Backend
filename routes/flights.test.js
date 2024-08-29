@@ -172,7 +172,8 @@ describe("POST /flight/orders", function () {
           data: {
             type: "flight-order",
             flightOffers: [/* flight offer data */],
-            travelers: [/* traveler data */]
+            travelers: [/* traveler data */],
+            name: "Test Trip"
           }
         })
         .set("authorization", `Bearer ${u1Token}`);
@@ -185,7 +186,8 @@ describe("POST /flight/orders", function () {
         .post("/flight/orders")
         .send({
           data: {
-            type: "flight-order"
+            type: "flight-order",
+            name: "Test Trip"
           }
         })
         .set("authorization", `Bearer ${u1Token}`);
@@ -199,7 +201,8 @@ describe("POST /flight/orders", function () {
           data: {
             type: "flight-order",
             flightOffers: [/* flight offer data */],
-            travelers: [/* traveler data */]
+            travelers: [/* traveler data */],
+            name: "Test Trip"
           }
         });
     expect(resp.statusCode).toEqual(401);
@@ -212,7 +215,8 @@ describe("POST /flight/orders", function () {
           data: {
             type: "flight-order",
             flightOffers: [/* invalid flight offer data */],
-            travelers: [/* traveler data */]
+            travelers: [/* traveler data */],
+            name: "Test Trip"
           }
         })
         .set("authorization", `Bearer ${u1Token}`);
