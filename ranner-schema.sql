@@ -13,7 +13,7 @@ CREATE TABLE users (
 -- Trip Table
 CREATE TABLE trips (
     trip_id SERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100),
     username VARCHAR(50) REFERENCES users(username) ON DELETE CASCADE,
     location_id VARCHAR(50) NOT NULL,
     start_date DATE NOT NULL,
