@@ -5,7 +5,6 @@ const User = require("../models/user");
 const Trip = require("../models/trip");
 const Flight = require("../models/flight");
 const { createToken } = require("../helpers/tokens");
-const { start } = require("repl");
 
 const testFlightIds = [];
 
