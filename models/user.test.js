@@ -11,8 +11,7 @@ const {
   commonBeforeAll,
   commonBeforeEach,
   commonAfterEach,
-  commonAfterAll,
-  testJobIds,
+  commonAfterAll
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -141,7 +140,7 @@ describe("get", function () {
       lastName: "U1L",
       email: "u1@email.com",
       isAdmin: false,
-      applications: [testJobIds[0]],
+      applications: [testtripIds[0]],
     });
   });
 
@@ -166,18 +165,18 @@ describe("update", function () {
   };
 
   test("works", async function () {
-    let job = await User.update("u1", updateData);
-    expect(job).toEqual({
+    let trip = await User.update("u1", updateData);
+    expect(trip).toEqual({
       username: "u1",
       ...updateData,
     });
   });
 
   test("works: set password", async function () {
-    let job = await User.update("u1", {
+    let trip = await User.update("u1", {
       password: "new",
     });
-    expect(job).toEqual({
+    expect(trip).toEqual({
       username: "u1",
       firstName: "U1F",
       lastName: "U1L",
