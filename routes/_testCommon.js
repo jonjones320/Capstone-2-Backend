@@ -18,7 +18,8 @@ async function commonBeforeAll() {
   await Trip.create(
       {
         trip_id: 1,
-        user_id: 1,
+        name: "Trip 1",
+        username: 1,
         location_id: 1,
         start_date: "2025-01-01",
         end_date: "2025-01-15",
@@ -27,7 +28,8 @@ async function commonBeforeAll() {
   await Trip.create(
       {
         trip_id: 2,
-        user_id: 2,
+        name: "Trip 2",
+        username: 2,
         location_id: 2,
         start_date: "2025-02-01",
         end_date: "2025-02-15",
@@ -36,7 +38,8 @@ async function commonBeforeAll() {
   await Trip.create(
       {
         trip_id: 3,
-        user_id: 3,
+        name: "Trip 3",
+        username: 3,
         location_id: 3,
         start_date: "2025-03-01",
         end_date: "2025-03-15",
