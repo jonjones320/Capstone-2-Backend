@@ -18,10 +18,10 @@ describe("config can come from env", function () {
     delete process.env.BCRYPT_WORK_FACTOR;
     delete process.env.DATABASE_URL;
 
-    expect(config.getDatabaseUri()).toEqual("postgresql://ranner");
+    expect(config.getDatabaseUri()).toEqual("postgresql://jonjones320:soccer10@localhost:5432/ranner");
     process.env.NODE_ENV = "test";
 
-    expect(config.getDatabaseUri()).toEqual("postgresql://ranner_test");
+    expect(config.getDatabaseUri()).toEqual("postgresql://jonjones320:soccer10@localhost:5432/ranner_test");
   });
 })
 
