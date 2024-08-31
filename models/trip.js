@@ -22,7 +22,7 @@ class Trip {
                               end_date,
                               budget)
            VALUES ($1, $2, $3, $4, $5, $6)
-           RETURNING trip_id AS "tripId", username, location_id AS "locationId", start_date AS "startDate", end_date AS "endDate", budget`,
+           RETURNING trip_id AS "tripId", name, username, location_id AS "locationId", start_date AS "startDate", end_date AS "endDate", budget`,
         [
           data.name,
           data.username,
