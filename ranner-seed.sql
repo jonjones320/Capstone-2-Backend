@@ -8,10 +8,8 @@ VALUES ('testuser',
         'Test',
         'User',
         'joel@joelburton.com',
-        FALSE);
-
-INSERT INTO users (username, password, first_name, last_name, email, is_admin)
-VALUES ('testadmin',
+        FALSE),
+        ('testadmin',
         '$2b$12$AZH7virni5jlTTiGgEg4zu3lSvAw68qVEfSIOjJ3RqtbJbdW/Oi5q',
         'Test',
         'Admin!',
