@@ -5,7 +5,7 @@ describe("config can come from env", function () {
     process.env.SECRET_KEY = "abc";
     process.env.PORT = "5000";
     process.env.DATABASE_URL = "other";
-    process.env.NODE_ENV = "other";
+    process.env.NODE_ENV = "production";
 
     const config = require("./config");
     expect(config.SECRET_KEY).toEqual("abc");
@@ -19,9 +19,9 @@ describe("config can come from env", function () {
     delete process.env.DATABASE_URL;
 
     expect(config.getDatabaseUri()).toEqual("postgresql://ranner");
-    process.env.NODE_ENV = "development";
+    process.env.NODE_ENV = "test";
 
-    expect(config.getDatabaseUri()).toEqual("postgresql://ranner_test");
+    expect(config.getDatabaseUri()).toEqual("postgresql://jonjones320:soccer10@localhost:5432/ranner_test");
   });
 })
 
