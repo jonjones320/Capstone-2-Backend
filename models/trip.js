@@ -119,7 +119,11 @@ class Trip {
   static async update(id, data) {
     const { setCols, values } = sqlForPartialUpdate(
         data,
-        {});
+        {
+          locationId: "location_id",
+          startDate: "start_date",
+          endDate: "end_date"
+        });
     const idVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE trips
