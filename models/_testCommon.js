@@ -12,6 +12,23 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM flights");
 
   await db.query(`
+    INSERT INTO users(username,
+                      password,
+                      first_name,
+                      last_name,
+                      email,
+                      is_admin)
+    VALUES ('u1', $1, 'U1F', 'U1L', 'u1@email.com', false),
+           ('u2', $2, 'U2F', 'U2L', 'u2@email.com', false),
+           ('a1', $3, 'A1F', 'A1L', 'a1@email.com', true)
+    RETURNING username`,
+  [
+    await bcrypt.hash("password1", BCRYPT_WORK_FACTOR),
+    await bcrypt.hash("password2", BCRYPT_WORK_FACTOR),
+    await bcrypt.hash("password3", BCRYPT_WORK_FACTOR),
+  ]);
+
+  await db.query(`
     INSERT INTO trips(trip_id, 
                       name, 
                       username, 
@@ -29,23 +46,6 @@ async function commonBeforeAll() {
            ('B456', '1', 'RDU', 'SEA'),
            ('C789', '2', 'DEN', 'LAX')
     RETURNING flight_number`);
-
-  await db.query(`
-        INSERT INTO users(username,
-                          password,
-                          first_name,
-                          last_name,
-                          email,
-                          is_admin)
-        VALUES ('u1', $1, 'U1F', 'U1L', 'u1@email.com', false),
-               ('u2', $2, 'U2F', 'U2L', 'u2@email.com', false),
-               ('a1', $3, 'A1F', 'A1L', 'a1@email.com', true)
-        RETURNING username`,
-      [
-        await bcrypt.hash("password1", BCRYPT_WORK_FACTOR),
-        await bcrypt.hash("password2", BCRYPT_WORK_FACTOR),
-        await bcrypt.hash("password3", BCRYPT_WORK_FACTOR),
-      ]);
 }
 
 async function commonBeforeEach() {
