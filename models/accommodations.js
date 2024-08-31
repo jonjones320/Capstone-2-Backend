@@ -60,6 +60,7 @@ class Accommodation {
 
     query += " ORDER BY name";
     const accommodationsRes = await db.query(query, queryValues);
+
     return accommodationsRes.rows;
   }
 
@@ -100,7 +101,10 @@ class Accommodation {
   static async update(id, data) {
     const { setCols, values } = sqlForPartialUpdate(
         data,
-        {});
+        {
+          checkIn: "check_in",
+          checkOut: "check_out",
+        });
     const idVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE accommodations 
@@ -130,7 +134,7 @@ class Accommodation {
            WHERE accommodation_id = $1
            RETURNING accommodation_id`, [id]);
     const accommodation = result.rows[0];
-
+    
     if (!accommodation) throw new NotFoundError(`No accommodation: ${id}`);
   }
 }

@@ -5,11 +5,13 @@ const { BCRYPT_WORK_FACTOR } = require("../config");
 
 async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM users");
+  await db.query("DELETE FROM accommodations");
+  // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM flights");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM trips");
   // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM flights");
+  await db.query("DELETE FROM users");
 
   await db.query(`
     INSERT INTO users(username,
@@ -36,9 +38,9 @@ async function commonBeforeAll() {
                       start_date, 
                       end_date, 
                       budget)
-    VALUES ('1', 'Trip1', 'u1', 'l1', '2022-01-01', '2022-01-10', 1000),
-           ('2', 'Trip2', 'u1', 'l2', '2022-02-01', '2022-02-10', 2000),
-           ('3', 'Trip3', 'u2', 'l3', '2022-03-01', '2022-03-10', 3000)`);
+    VALUES ('1', 'Trip1', 'u1', 'l1', '2026-01-01', '2026-01-10', 1000),
+           ('2', 'Trip2', 'u1', 'l2', '2026-02-01', '2026-02-10', 2000),
+           ('3', 'Trip3', 'u2', 'l3', '2026-03-01', '2026-03-10', 3000)`);
 
   await db.query(`
     INSERT INTO flights (flight_number, trip_id, origin, destination)
@@ -46,6 +48,12 @@ async function commonBeforeAll() {
            ('B456', '1', 'RDU', 'SEA'),
            ('C789', '2', 'DEN', 'LAX')
     RETURNING flight_number`);
+
+  await db.query(`
+    INSERT INTO accommodations (accommodation_id, trip_id, name, check_in, check_out)
+    VALUES (91, 1, 'Hotel1', '2026-01-01', '2026-01-10'),
+           (92, 2, 'Hotel2', '2026-01-01', '2026-01-10'),
+           (93, 3, 'Hotel3', '2026-02-01', '2026-02-10')`);
 }
 
 async function commonBeforeEach() {
