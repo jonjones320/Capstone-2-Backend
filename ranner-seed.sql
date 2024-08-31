@@ -29,3 +29,8 @@ INSERT INTO flights (flight_number, trip_id, origin, destination)
 VALUES ('AA123', 1, 'JFK', 'LAX'),
        ('AA124', 2, 'LAX', 'JFK'),
        ('DL456', 3, 'LAX', 'SFO');
+
+INSERT INTO accommodations (accommodation_id, trip_id, name, check_in, check_out)
+VALUES (1, 1, 'Hotel 1', '2025-01-01', '2025-01-10'),
+       (2, 2, 'Hotel 2', '2025-02-01', '2025-02-05'),
+       (3, 3, 'Hotel 3', '2025-03-01', '2025-03-07');
