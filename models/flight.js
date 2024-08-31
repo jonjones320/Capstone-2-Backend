@@ -111,14 +111,17 @@ class Flight {
   static async update(flightNumber, data) {
     const { setCols, values } = sqlForPartialUpdate(
         data,
-        {});
+        {
+          origin: "origin",
+          destination: "destination"
+        });
     const idVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE flights 
                           SET ${setCols} 
                           WHERE flight_number = ${idVarIdx} 
                           RETURNING flight_number AS "flightNumber", 
-                                    trip_id AS "tripId"
+                                    trip_id AS "tripId",
                                     origin,
                                     destination`;
     const result = await db.query(querySql, [...values, flightNumber]);
