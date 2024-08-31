@@ -21,7 +21,7 @@ afterAll(commonAfterAll);
 describe("create", function () {
   const newFlight = {
     flightNumber: "D123",
-    tripId: "3",
+    tripId: 3,
     origin: "LAX",
     destination: "ORD",
   };
@@ -30,7 +30,7 @@ describe("create", function () {
     let flight = await Flight.create(newFlight);
     expect(flight).toEqual({
       flightNumber: "D123",
-      tripId: "3",
+      tripId: 3,
       origin: "LAX",
       destination: "ORD",
     });
@@ -43,7 +43,7 @@ describe("create", function () {
     expect(result.rows).toEqual([
       {
         flight_number: "D123",
-        trip_id: "3",
+        trip_id: 3,
         origin: "LAX",
         destination: "ORD",
       },
@@ -55,12 +55,12 @@ describe("create", function () {
 
 describe("get", function () {
   test("works", async function () {
-    let flight = await Flight.get(testFlightIds[0]);
+    let flight = await Flight.get("A123");
     expect(flight).toEqual({
-      flightNumber: "A000",
-      tripId: "1",
-      origin: "RDU",
-      destination: "NYC",
+      flightNumber: "A123",
+      tripId: 1,
+      origin: "SFO",
+      destination: "JFK",
     });
   });
 
@@ -78,29 +78,29 @@ describe("get", function () {
 
 describe("update", function () {
   const updateData = {
-    origin: "SFO",
+    origin: "RDU",
     destination: "BOS",
   };
 
   test("works", async function () {
-    let flight = await Flight.update(testFlightIds[0], updateData);
+    let flight = await Flight.update("A123", updateData);
     expect(flight).toEqual({
-      flightNumber: "A000",
-      tripId: "1",
-      origin: "SFO",
+      flightNumber: "A123",
+      tripId: 1,
+      origin: "RDU",
       destination: "BOS",
     });
 
     const result = await db.query(
       `SELECT flight_number, trip_id, origin, destination
        FROM flights
-       WHERE flight_number = 'A000'`
+       WHERE flight_number = 'A123'`
     );
     expect(result.rows).toEqual([
       {
-        flight_number: "A000",
-        trip_id: "1",
-        origin: "SFO",
+        flight_number: "A123",
+        trip_id: 1,
+        origin: "RDU",
         destination: "BOS",
       },
     ]);
@@ -120,9 +120,9 @@ describe("update", function () {
 
 describe("remove", function () {
   test("works", async function () {
-    await Flight.remove(testFlightIds[0]);
+    await Flight.remove("A123");
     const res = await db.query(
-      "SELECT * FROM flights WHERE flight_number='A000'"
+      "SELECT * FROM flights WHERE flight_number='A123'"
     );
     expect(res.rows.length).toEqual(0);
   });
