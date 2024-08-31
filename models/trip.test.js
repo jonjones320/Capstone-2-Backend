@@ -32,7 +32,7 @@ describe("create", function () {
 
     // Remove tripId from newTrip for comparison
     const { tripId, ...tripWithoutId } = trip;
-    
+
     // Convert dates to ISO string format for comparison
     tripWithoutId.startDate = new Date(tripWithoutId.startDate).toISOString();
     tripWithoutId.endDate = new Date(tripWithoutId.endDate).toISOString();
@@ -87,7 +87,7 @@ describe("get", function () {
 
   test("not found if no such trip", async function () {
     try {
-      await Trip.get("nope");
+      await Trip.get(9999);
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
@@ -140,7 +140,7 @@ describe("update", function () {
 
   test("not found if no such trip", async function () {
     try {
-      await Trip.update("nope", updateData);
+      await Trip.update(9999, updateData);
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
@@ -161,7 +161,7 @@ describe("remove", function () {
 
   test("not found if no such trip", async function () {
     try {
-      await Trip.remove("nope");
+      await Trip.remove(9999);
       fail();
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
