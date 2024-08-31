@@ -19,7 +19,7 @@ afterAll(commonAfterAll);
 
 describe("create", function () {
   const newAccommodation = {
-    tripId: "1",
+    tripId: 1,
     name: "Hotel California",
     checkIn: "2022-01-01",
     checkOut: "2022-01-10",
@@ -29,24 +29,28 @@ describe("create", function () {
     let accommodation = await Accommodation.create(newAccommodation);
     expect(accommodation).toEqual({
       accommodationId: expect.any(Number),
-      tripId: "1",
+      tripId: 1,
       name: "Hotel California",
-      checkIn: "2022-01-01",
-      checkOut: "2022-01-10",
+      checkIn: new Date("2022-01-01T08:00:00.000Z"),
+      checkOut: new Date("2022-01-10T08:00:00.000Z"),
     });
 
     const result = await db.query(
-      `SELECT accommodation_id AS "accommodationId", trip_id AS "tripId", name, check_in AS "checkIn", check_out AS "checkOut"
+      `SELECT accommodation_id AS "accommodationId", 
+              trip_id AS "tripId", 
+              name,
+              check_in AS "checkIn", 
+              check_out AS "checkOut"
        FROM accommodations
        WHERE trip_id = '1' AND name = 'Hotel California'`
     );
     expect(result.rows).toEqual([
       {
         accommodationId: expect.any(Number),
-        tripId: "1",
+        tripId: 1,
         name: "Hotel California",
-        checkIn: "2022-01-01",
-        checkOut: "2022-01-10",
+        checkIn: new Date("2022-01-01T08:00:00.000Z"),
+        checkOut: new Date("2022-01-10T08:00:00.000Z"),
       },
     ]);
   });
@@ -59,10 +63,10 @@ describe("get", function () {
     let accommodation = await Accommodation.get(1);
     expect(accommodation).toEqual({
       accommodationId: 1,
-      tripId: "1",
+      tripId: 1,
       name: "Hotel California",
-      checkIn: "2022-01-01",
-      checkOut: "2022-01-10",
+      checkIn: new Date("2022-01-01T08:00:00.000Z"),
+      checkOut: new Date("2022-01-10T08:00:00.000Z"),
     });
   });
 
@@ -89,22 +93,25 @@ describe("update", function () {
     let accommodation = await Accommodation.update(1, updateData);
     expect(accommodation).toEqual({
       accommodationId: 1,
-      tripId: "1",
+      tripId: 1,
       ...updateData,
     });
 
     const result = await db.query(
-      `SELECT accommodation_id AS "accommodationId", trip_id AS "tripId", name, check_in AS "checkIn", check_out AS "checkOut"
+      `SELECT accommodation_id AS "accommodationId", 
+              trip_id AS "tripId", 
+              name, check_in AS "checkIn", 
+              check_out AS "checkOut"
        FROM accommodations
        WHERE accommodation_id = 1`
     );
     expect(result.rows).toEqual([
       {
         accommodationId: 1,
-        tripId: "1",
+        tripId: 1,
         name: "Updated Hotel",
-        checkIn: "2022-01-05",
-        checkOut: "2022-01-15",
+        checkIn: new Date("2022-01-01T08:00:00.000Z"),
+        checkOut: new Date("2022-01-10T08:00:00.000Z"),
       },
     ]);
   });
