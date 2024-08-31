@@ -10,11 +10,11 @@ const testFlightIds = [];
 
 async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM users");
+  await db.query("DELETE FROM flights");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM trips");
   // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM flights");
+  await db.query("DELETE FROM users");
 
   await User.register(
       {
