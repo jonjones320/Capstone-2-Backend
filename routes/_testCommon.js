@@ -13,12 +13,42 @@ async function commonBeforeAll() {
   await db.query("DELETE FROM users");
   // noinspection SqlWithoutWhere
   await db.query("DELETE FROM trips");
+  // noinspection SqlWithoutWhere
+  await db.query("DELETE FROM flights");
+
+  await User.register(
+      {
+        username: "u1",
+        firstName: "U1F",
+        lastName: "U1L",
+        email: "user1@user.com",
+        password: "password1",
+        isAdmin: false,
+      });
+  await User.register(
+      {
+        username: "u2",
+        firstName: "U2F",
+        lastName: "U2L",
+        email: "user2@user.com",
+        password: "password2",
+        isAdmin: false,
+      });
+  await User.register(
+      {
+        username: "u3",
+        firstName: "U3F",
+        lastName: "U3L",
+        email: "user3@user.com",
+        password: "password3",
+        isAdmin: false,
+      });
 
   await Trip.create(
       {
         trip_id: 1,
         name: "Trip 1",
-        username: 1,
+        username: "u1",
         location_id: 1,
         start_date: "2025-01-01",
         end_date: "2025-01-15",
@@ -28,7 +58,7 @@ async function commonBeforeAll() {
       {
         trip_id: 2,
         name: "Trip 2",
-        username: 2,
+        username: "u2",
         location_id: 2,
         start_date: "2025-02-01",
         end_date: "2025-02-15",
@@ -38,7 +68,7 @@ async function commonBeforeAll() {
       {
         trip_id: 3,
         name: "Trip 3",
-        username: 3,
+        username: "u3",
         location_id: 3,
         start_date: "2025-03-01",
         end_date: "2025-03-15",
@@ -49,31 +79,6 @@ async function commonBeforeAll() {
   testFlightIds[0] = (await Flight.create(flightData)).id;
   testFlightIds[1] = (await Flight.create(flightData)).id;
   testFlightIds[2] = (await Flight.create(flightData)).id;
-
-  await User.register({
-    username: "u1",
-    firstName: "U1F",
-    lastName: "U1L",
-    email: "user1@user.com",
-    password: "password1",
-    isAdmin: false,
-  });
-  await User.register({
-    username: "u2",
-    firstName: "U2F",
-    lastName: "U2L",
-    email: "user2@user.com",
-    password: "password2",
-    isAdmin: false,
-  });
-  await User.register({
-    username: "u3",
-    firstName: "U3F",
-    lastName: "U3L",
-    email: "user3@user.com",
-    password: "password3",
-    isAdmin: false,
-  });
 }
 
 async function commonBeforeEach() {
