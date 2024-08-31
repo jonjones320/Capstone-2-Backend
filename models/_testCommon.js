@@ -4,15 +4,10 @@ const { BCRYPT_WORK_FACTOR } = require("../config");
 
 
 async function commonBeforeAll() {
-  // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM accommodations");
-  // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM flights");
-  // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM trips");
-  // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM users");
+  // Truncate tables to remove all existing rows and reset primary keys
+  await db.query("TRUNCATE flights, trips, users RESTART IDENTITY CASCADE");
 
+  // Insert users
   await db.query(`
     INSERT INTO users(username,
                       password,
@@ -30,38 +25,40 @@ async function commonBeforeAll() {
     await bcrypt.hash("password3", BCRYPT_WORK_FACTOR),
   ]);
 
+  // Insert trips
   await db.query(`
-    INSERT INTO trips(trip_id, 
-                      name, 
+    INSERT INTO trips(name, 
                       username, 
                       location_id, 
                       start_date, 
                       end_date, 
                       budget)
-    VALUES ('1', 'Trip1', 'u1', 'l1', '2026-01-01', '2026-01-10', 1000),
-           ('2', 'Trip2', 'u1', 'l2', '2026-02-01', '2026-02-10', 2000),
-           ('3', 'Trip3', 'u2', 'l3', '2026-03-01', '2026-03-10', 3000)`);
+    VALUES ('Trip1', 'u1', 'l1', '2026-01-01', '2026-01-10', 1000),
+           ('Trip2', 'u1', 'l2', '2026-02-01', '2026-02-10', 2000),
+           ('Trip3', 'u2', 'l3', '2026-03-01', '2026-03-10', 3000)`);
 
+  // Insert flights
   await db.query(`
     INSERT INTO flights (flight_number, trip_id, origin, destination)
     VALUES ('A123', '1', 'SFO', 'JFK'), 
-           ('B456', '1', 'RDU', 'SEA'),
-           ('C789', '2', 'DEN', 'LAX')
+           ('B456', '2', 'RDU', 'SEA'),
+           ('C789', '3', 'DEN', 'LAX')
     RETURNING flight_number`);
 
+  // Insert accommodations
   await db.query(`
-    INSERT INTO accommodations (accommodation_id, trip_id, name, check_in, check_out)
-    VALUES (91, 1, 'Hotel1', '2026-01-01', '2026-01-10'),
-           (92, 2, 'Hotel2', '2026-01-01', '2026-01-10'),
-           (93, 3, 'Hotel3', '2026-02-01', '2026-02-10')`);
+    INSERT INTO accommodations (trip_id, name, check_in, check_out)
+    VALUES (1, 'Hotel1', '2026-01-01', '2026-01-10'),
+           (2, 'Hotel2', '2026-01-01', '2026-01-10'),
+           (3, 'Hotel3', '2026-02-01', '2026-02-10')`);
 }
 
 async function commonBeforeEach() {
-  // await db.query("BEGIN");
+  await db.query("BEGIN");
 }
 
 async function commonAfterEach() {
-  // await db.query("ROLLBACK");
+  await db.query("ROLLBACK");
 }
 
 async function commonAfterAll() {
