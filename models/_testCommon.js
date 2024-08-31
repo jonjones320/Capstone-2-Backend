@@ -19,15 +19,15 @@ async function commonBeforeAll() {
                       start_date, 
                       end_date, 
                       budget)
-    VALUES ('t1', 'Trip1', 'u1', 'l1', '2022-01-01', '2022-01-10', 1000),
-           ('t2', 'Trip2', 'u1', 'l2', '2022-02-01', '2022-02-10', 2000),
-           ('t3', 'Trip3', 'u2', 'l3', '2022-03-01', '2022-03-10', 3000)`);
+    VALUES ('1', 'Trip1', 'u1', 'l1', '2022-01-01', '2022-01-10', 1000),
+           ('2', 'Trip2', 'u1', 'l2', '2022-02-01', '2022-02-10', 2000),
+           ('3', 'Trip3', 'u2', 'l3', '2022-03-01', '2022-03-10', 3000)`);
 
   await db.query(`
     INSERT INTO flights (flight_number, trip_id, origin, destination)
-    VALUES ('A123', 't1', 'SFO', 'JFK'), 
-           ('B456', 't1', 'RDU', 'SEA'),
-           ('C789', 't2', 'DEN', 'LAX')
+    VALUES ('A123', '1', 'SFO', 'JFK'), 
+           ('B456', '1', 'RDU', 'SEA'),
+           ('C789', '2', 'DEN', 'LAX')
     RETURNING flight_number`);
 
   await db.query(`
