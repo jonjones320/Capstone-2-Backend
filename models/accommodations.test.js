@@ -61,9 +61,9 @@ describe("create", function () {
 
 describe("get", function () {
   test("works", async function () {
-    let accommodation = await Accommodation.get(91);
+    let accommodation = await Accommodation.get(1);
     expect(accommodation).toEqual({
-      accommodationId: 91,
+      accommodationId: 1,
       tripId: 1,
       name: "Hotel1",
       checkIn: new Date("2026-01-01T08:00:00.000Z"),
@@ -91,9 +91,9 @@ describe("update", function () {
   };
 
   test("works", async function () {
-    let accommodation = await Accommodation.update(91, updateData);
+    let accommodation = await Accommodation.update(1, updateData);
     expect(accommodation).toEqual({
-      accommodationId: 91,
+      accommodationId: 1,
       tripId: 1,
       ...updateData,
     });
@@ -105,11 +105,11 @@ describe("update", function () {
               check_in AS "checkIn", 
               check_out AS "checkOut"
        FROM accommodations
-       WHERE accommodation_id = 91`
+       WHERE accommodation_id = 1`
     );
     expect(result.rows).toEqual([
       {
-        accommodationId: 91,
+        accommodationId: 1,
         tripId: 1,
         name: "Updated Hotel",
         checkIn: new Date("2026-01-01T08:00:00.000Z"),
@@ -132,7 +132,7 @@ describe("update", function () {
 
 describe("remove", function () {
   test("works", async function () {
-    await Accommodation.remove(91);
+    await Accommodation.remove(1);
     const res = await db.query(
       "SELECT * FROM accommodations WHERE accommodation_id=91"
     );
