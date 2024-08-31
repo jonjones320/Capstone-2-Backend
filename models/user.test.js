@@ -112,6 +112,13 @@ describe("findAll", function () {
     const users = await User.findAll();
     expect(users).toEqual([
       {
+        username: "a1",
+        firstName : "A1F",
+        lastName: "A1L",
+        email: "a1@email.com",
+        isAdmin: true,
+      },
+      {
         username: "u1",
         firstName: "U1F",
         lastName: "U1L",
@@ -139,8 +146,7 @@ describe("get", function () {
       firstName: "U1F",
       lastName: "U1L",
       email: "u1@email.com",
-      isAdmin: false,
-      applications: [testtripIds[0]],
+      isAdmin: false
     });
   });
 
