@@ -4,6 +4,7 @@ const db = require("../db.js");
 const User = require("../models/user");
 const Trip = require("../models/trip");
 const Flight = require("../models/flight");
+const Accommodation = require("../models/accommodation");
 const { createToken } = require("../helpers/tokens");
 
 
@@ -78,14 +79,27 @@ async function commonBeforeAll() {
   await Flight.create({ flightNumber: "B123", trip_id: 2, origin: 'SEA', destination: 'DEN' });
   await Flight.create({ flightNumber: "C123", trip_id: 3, origin: 'LAX', destination: 'SYD' });
 
-  const accommodationData = {
-    tripId: 1,
-    name: "Accommodation 1",
-    checkIn: "2025-01-01",
-    checkOut: "2025-01-05",
-  };
-
-  await Accommodation.create(accommodationData);
+  await Accommodation.create(
+      {
+        tripId: 1,
+        name: "Accommodation 1",
+        checkIn: "2025-01-01",
+        checkOut: "2025-01-05",
+      });
+  await Accommodation.create(
+      {
+        tripId: 2,
+        name: "Accommodation 2",
+        checkIn: "2025-02-01",
+        checkOut: "2025-02-05",
+      });
+  await Accommodation.create(
+      {
+        tripId: 3,
+        name: "Accommodation 3",
+        checkIn: "2025-03-01",
+        checkOut: "2025-03-05",
+      });
 }
 
 async function commonBeforeEach() {
