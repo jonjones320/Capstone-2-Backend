@@ -51,33 +51,33 @@ async function commonBeforeAll() {
       {
         name: "Trip 1",
         username: "u1",
-        location_id: 1,
-        start_date: "2025-01-01",
-        end_date: "2025-01-15",
+        locationId: "l1",
+        startDate: "2025-01-01",
+        endDate: "2025-01-15",
         budget: 1000,
       });
   await Trip.create(
       {
         name: "Trip 2",
         username: "u2",
-        location_id: 2,
-        start_date: "2025-02-01",
-        end_date: "2025-02-15",
+        locationId: "l2",
+        startDate: "2025-02-01",
+        endDate: "2025-02-15",
         budget: 2000,
       });
   await Trip.create(
       {
         name: "Trip 3",
         username: "u3",
-        location_id: 3,
-        start_date: "2025-03-01",
-        end_date: "2025-03-15",
+        locationId: "l3",
+        startDate: "2025-03-01",
+        endDate: "2025-03-15",
         budget: 3000,
       });
 
-  await Flight.create({ flightNumber: "A123", trip_id: 1, origin: 'RDU', destination: 'NYC' });
-  await Flight.create({ flightNumber: "B123", trip_id: 2, origin: 'SEA', destination: 'DEN' });
-  await Flight.create({ flightNumber: "C123", trip_id: 3, origin: 'LAX', destination: 'SYD' });
+  await Flight.create({ flightNumber: "A123", tripId: 1, origin: 'RDU', destination: 'NYC' });
+  await Flight.create({ flightNumber: "B123", tripId: 2, origin: 'SEA', destination: 'DEN' });
+  await Flight.create({ flightNumber: "C123", tripId: 3, origin: 'LAX', destination: 'SYD' });
 
   await Accommodation.create(
       {
