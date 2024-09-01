@@ -6,12 +6,11 @@ const Trip = require("../models/trip");
 const Flight = require("../models/flight");
 const { createToken } = require("../helpers/tokens");
 
-const testFlightIds = [];
 
 async function commonBeforeAll() {
   // Truncate tables to remove all existing rows and reset primary keys
   await db.query("TRUNCATE accommodations, flights, trips, users RESTART IDENTITY CASCADE");
-  
+
   // // noinspection SqlWithoutWhere
   // await db.query("DELETE FROM flights");
   // // noinspection SqlWithoutWhere
@@ -49,7 +48,6 @@ async function commonBeforeAll() {
 
   await Trip.create(
       {
-        trip_id: 1,
         name: "Trip 1",
         username: "u1",
         location_id: 1,
@@ -59,7 +57,6 @@ async function commonBeforeAll() {
       });
   await Trip.create(
       {
-        trip_id: 2,
         name: "Trip 2",
         username: "u2",
         location_id: 2,
@@ -69,7 +66,6 @@ async function commonBeforeAll() {
       });
   await Trip.create(
       {
-        trip_id: 3,
         name: "Trip 3",
         username: "u3",
         location_id: 3,
@@ -78,10 +74,18 @@ async function commonBeforeAll() {
         budget: 3000,
       });
 
-  const flightData = { flightNumber: "A000", trip_id: 1, origin: 'RDU', destination: 'NYC' };
-  testFlightIds[0] = (await Flight.create(flightData)).id;
-  testFlightIds[1] = (await Flight.create(flightData)).id;
-  testFlightIds[2] = (await Flight.create(flightData)).id;
+  await Flight.create({ flightNumber: "A123", trip_id: 1, origin: 'RDU', destination: 'NYC' });
+  await Flight.create({ flightNumber: "B123", trip_id: 2, origin: 'SEA', destination: 'DEN' });
+  await Flight.create({ flightNumber: "C123", trip_id: 3, origin: 'LAX', destination: 'SYD' });
+
+  const accommodationData = {
+    tripId: 1,
+    name: "Accommodation 1",
+    checkIn: "2025-01-01",
+    checkOut: "2025-01-05",
+  };
+
+  await Accommodation.create(accommodationData);
 }
 
 async function commonBeforeEach() {
@@ -107,7 +111,6 @@ module.exports = {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
-  testFlightIds,
   u1Token,
   u2Token,
   adminToken,
