@@ -11,6 +11,7 @@ const testFlightIds = [];
 async function commonBeforeAll() {
   // Truncate tables to remove all existing rows and reset primary keys
   await db.query("TRUNCATE accommodations, flights, trips, users RESTART IDENTITY CASCADE");
+  
   // // noinspection SqlWithoutWhere
   // await db.query("DELETE FROM flights");
   // // noinspection SqlWithoutWhere
