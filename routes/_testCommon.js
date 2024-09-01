@@ -9,12 +9,14 @@ const { createToken } = require("../helpers/tokens");
 const testFlightIds = [];
 
 async function commonBeforeAll() {
-  // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM flights");
-  // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM trips");
-  // noinspection SqlWithoutWhere
-  await db.query("DELETE FROM users");
+  // Truncate tables to remove all existing rows and reset primary keys
+  await db.query("TRUNCATE accommodations, flights, trips, users RESTART IDENTITY CASCADE");
+  // // noinspection SqlWithoutWhere
+  // await db.query("DELETE FROM flights");
+  // // noinspection SqlWithoutWhere
+  // await db.query("DELETE FROM trips");
+  // // noinspection SqlWithoutWhere
+  // await db.query("DELETE FROM users");
 
   await User.register(
       {
