@@ -200,8 +200,7 @@ describe("GET /users/:username", function () {
         firstName: "U1F",
         lastName: "U1L",
         email: "user1@user.com",
-        isAdmin: false,
-        applications: [testFlightNumbers[0]],
+        isAdmin: false
       },
     });
   });
@@ -216,8 +215,7 @@ describe("GET /users/:username", function () {
         firstName: "U1F",
         lastName: "U1L",
         email: "user1@user.com",
-        isAdmin: false,
-        applications: [testFlightNumbers[0]],
+        isAdmin: false
       },
     });
   });
