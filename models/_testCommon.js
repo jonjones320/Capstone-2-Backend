@@ -5,7 +5,7 @@ const { BCRYPT_WORK_FACTOR } = require("../config");
 
 async function commonBeforeAll() {
   // Truncate tables to remove all existing rows and reset primary keys
-  await db.query("TRUNCATE flights, trips, users RESTART IDENTITY CASCADE");
+  await db.query("TRUNCATE accommodations, flights, trips, users RESTART IDENTITY CASCADE");
 
   // Insert users
   await db.query(`
