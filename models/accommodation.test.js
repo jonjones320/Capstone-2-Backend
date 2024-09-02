@@ -1,7 +1,7 @@
 "use strict";
 
 const db = require("../db");
-const Accommodation = require("./accommodations");
+const Accommodation = require("./accommodation");
 const { NotFoundError } = require("../expressError");
 const {
   commonBeforeAll,
