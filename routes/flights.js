@@ -29,7 +29,7 @@ router.get("/flight/destinations", async function (req, res, next) {
   }
 });
 
-// Flight Cheapest Date Search
+// Flight Date Search
 router.get("/flight/dates", async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightDates.get({
