@@ -20,8 +20,9 @@ describe("config can come from env", function () {
 
     expect(config.getDatabaseUri()).toEqual("postgresql://ranner");
     process.env.NODE_ENV = "test";
+    delete process.env.DATABASE_TEST_URL;
 
-    expect(config.getDatabaseUri()).toEqual("postgresql://jonjones320:soccer10@localhost:5432/ranner_test");
+    expect(config.getDatabaseUri()).toEqual("postgresql://ranner_test");
   });
 })
 
