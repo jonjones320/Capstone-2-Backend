@@ -12,4 +12,14 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+// PATCH /trips/:id: update a trip
+router.patch('/:id', async (req, res, next) => {
+  try {
+    const trip = await Trip.update(req.body);
+    return res.status(201).json({ trip });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;
