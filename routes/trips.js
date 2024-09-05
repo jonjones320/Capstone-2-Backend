@@ -5,7 +5,7 @@ const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
 const { validateTripNew, 
         validateTripUpdate, 
         validateTripSearch 
-      } = require('../middleware/validateTrip');
+      } = require('../middleware/validateSchema');
 
 // POST /trips: create a new trip
 router.post('/', ensureCorrectUserOrAdmin, validateTripNew, async (req, res, next) => {

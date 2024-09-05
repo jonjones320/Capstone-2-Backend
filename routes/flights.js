@@ -10,7 +10,7 @@ const { ensureAdmin } = require("../middleware/auth");
 const { validateFlightNew, 
         validateFlightUpdate, 
         validateFlightSearch 
-      } = require('../middleware/validateTrip');
+      } = require('../middleware/validateSchema');
 
 
 

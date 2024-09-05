@@ -12,7 +12,7 @@ const { validateUserNew,
         validateUserUpdate,
         validateUserAuth,
         validateUserRegister
-      } = require('../middleware/validateTrip');
+      } = require('../middleware/validateSchema');
 
 
 
