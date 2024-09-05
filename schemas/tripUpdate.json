@@ -3,7 +3,17 @@
   "$id": "http://our.company.com/tripUpdate.schema.json",
   "type": "object",
   "properties": {
-    "destination": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "username": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "location": {
       "type": "string",
       "minLength": 1,
       "maxLength": 100

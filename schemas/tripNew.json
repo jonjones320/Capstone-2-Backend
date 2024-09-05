@@ -8,18 +8,23 @@
       "minLength": 1,
       "maxLength": 30
     },
-    "destination": {
+    "username": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+    },
+    "location": {
       "type": "string",
       "minLength": 1,
       "maxLength": 100
     },
     "startDate": {
       "type": "string",
-      "format": "date-time"
+      "format": "date"
     },
     "endDate": {
       "type": "string",
-      "format": "date-time"
+      "format": "date"
     },
     "budget": {
       "type": "number",
@@ -29,7 +34,8 @@
   "additionalProperties": false,
   "required": [
     "name",
-    "destination",
+    "username",
+    "location",
     "startDate",
     "endDate"
   ]

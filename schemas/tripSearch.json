@@ -3,7 +3,13 @@
   "$id": "http://our.trip.com/tripSearch.schema.json",
   "type": "object",
   "properties": {
-    "destination": {
+    "name": {
+      "type": "string"
+    },
+    "username": {
+      "type": "string"
+    },
+    "location": {
       "type": "string"
     },
     "startDate": {

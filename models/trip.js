@@ -13,7 +13,7 @@ class Trip {
    *
    * Returns { tripId, username, location, startDate, endDate, budget }
    **/
-  static async create(data) {
+  static async create(name, username, location, startDate, endDate, budget) {
     const result = await db.query(
           `INSERT INTO trips (name,
                               username,
@@ -22,17 +22,16 @@ class Trip {
                               end_date,
                               budget)
            VALUES ($1, $2, $3, $4, $5, $6)
-           RETURNING trip_id AS "tripId", name, username, location, start_date AS "startDate", end_date AS "endDate", budget`,
-        [
-          data.name,
-          data.username,
-          data.location,
-          data.startDate,
-          data.endDate,
-          data.budget,
-        ]);
+           RETURNING trip_id AS "tripId", 
+                      name, 
+                      username, 
+                      location, 
+                      start_date AS "startDate", 
+                      end_date AS "endDate", 
+                      budget`,
+        [name, username, location, startDate, endDate, budget]);
     let trip = result.rows[0];
-
+    
     return trip;
   }
 
