@@ -1,14 +1,14 @@
 const express = require('express');
 const router = new express.Router();
 const Trip = require('../models/trip');
-const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
+const { ensureCorrectUserOrAdmin, ensureAdmin, ensureLoggedIn } = require("../middleware/auth");
 const { validateTripNew, 
         validateTripUpdate, 
         validateTripSearch 
       } = require('../middleware/validateSchema');
 
 // POST /trips: create a new trip
-router.post('/', ensureCorrectUserOrAdmin, validateTripNew, async (req, res, next) => {
+router.post('/', ensureLoggedIn, validateTripNew, async (req, res, next) => {
   try {
     const trip = await Trip.create(req.body);
     return res.status(201).json({ trip });
