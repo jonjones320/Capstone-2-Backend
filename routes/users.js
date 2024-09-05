@@ -6,7 +6,6 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
 const { createToken } = require("../helpers/tokens");
-const { BadRequestError } = require("../expressError");
 const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
 const { validateUserNew,
         validateUserUpdate,
