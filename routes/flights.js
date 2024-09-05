@@ -3,21 +3,19 @@
 /** Routes for flights. */
 
 const express = require("express");
-const { BadRequestError } = require("../expressError");
-const { ensureAdmin } = require("../middleware/auth");
-// const jsonschema = require("jsonschema");
-// const Flight = require("../models/flight");
-// const flightNewSchema = require("../schemas/flightNew.json");
-// const flightUpdateSchema = require("../schemas/flightUpdate.json");
-// const flightSearchSchema = require("../schemas/flightSearch.json");
-
 const router = express.Router({ mergeParams: true });
 const amadeus = require("../amadeus"); // Access the Amadeus SDK
+const { BadRequestError } = require("../expressError");
+const { ensureAdmin } = require("../middleware/auth");
+const { validateFlightNew, 
+        validateFlightUpdate, 
+        validateFlightSearch 
+      } = require('../middleware/validateTrip');
 
 
 
 // Flight Inspiration Search
-router.get("/flight/destinations", async function (req, res, next) {
+router.get("/flight/destinations", validateFlightSearch, async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightDestinations.get({
       origin: req.query.origin
@@ -30,7 +28,7 @@ router.get("/flight/destinations", async function (req, res, next) {
 });
 
 // Flight Date Search
-router.get("/flight/dates", async function (req, res, next) {
+router.get("/flight/dates", validateFlightSearch, async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightDates.get({
       origin: req.query.origin,
@@ -44,7 +42,7 @@ router.get("/flight/dates", async function (req, res, next) {
 });
 
 // GET Flight Offers Search
-router.get("/flight/offers", async function (req, res, next) {
+router.get("/flight/offers", validateFlightSearch, async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightOffersSearch.get({
       originLocationCode: req.query.origin,
@@ -64,7 +62,7 @@ router.get("/flight/offers", async function (req, res, next) {
 });
 
 // POST Flight Offers Search
-router.post("/flight/offers", async function (req, res, next) {
+router.post("/flight/offers", validateFlightSearch, async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightOffersSearch.post(JSON.stringify(req.body));
     return res.json(response.data);

@@ -1,9 +1,14 @@
 const express = require('express');
 const router = new express.Router();
 const Trip = require('../models/trip');
+const { ensureCorrectUserOrAdmin, ensureAdmin } = require("../middleware/auth");
+const { validateTripNew, 
+        validateTripUpdate, 
+        validateTripSearch 
+      } = require('../middleware/validateTrip');
 
 // POST /trips: create a new trip
-router.post('/', async (req, res, next) => {
+router.post('/', ensureCorrectUserOrAdmin, validateTripNew, async (req, res, next) => {
   try {
     const trip = await Trip.create(req.body);
     return res.status(201).json({ trip });
@@ -13,7 +18,7 @@ router.post('/', async (req, res, next) => {
 });
 
 // PATCH /trips/:id: update a trip
-router.patch('/:id', async (req, res, next) => {
+router.patch('/:id', ensureCorrectUserOrAdmin, validateTripUpdate, async (req, res, next) => {
   try {
     const trip = await Trip.update(req.body);
     return res.status(201).json({ trip });
@@ -23,7 +28,7 @@ router.patch('/:id', async (req, res, next) => {
 });
 
 // GET /trips: get all trips  
-router.get('/', async (req, res, next) => {
+router.get('/', ensureAdmin, async (req, res, next) => {
   try {
     const trips = await Trip.findAll(req.query);
     return res.json({ trips });
@@ -33,7 +38,7 @@ router.get('/', async (req, res, next) => {
 });
 
 // GET /trips/:id: get a single trip by id
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', ensureCorrectUserOrAdmin, validateTripSearch, async (req, res, next) => {
   try {
     const trip = await Trip.findOne(req.params.id);
     return res.json({ trip });
@@ -43,7 +48,7 @@ router.get('/:id', async (req, res, next) => {
 });   
 
 // DELETE /trips/:id: delete a single trip by id
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', ensureCorrectUserOrAdmin, async (req, res, next) => {
   try {
     await Trip.remove(req.params.id);
     return res.json({ message: 'Deleted' });
