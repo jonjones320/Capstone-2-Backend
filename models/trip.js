@@ -9,24 +9,24 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 class Trip {
   /** Create a trip (from data), update db, return new trip data.
    *
-   * data should be { username, locationId, startDate, endDate, budget }
+   * data should be { username, location, startDate, endDate, budget }
    *
-   * Returns { tripId, username, locationId, startDate, endDate, budget }
+   * Returns { tripId, username, location, startDate, endDate, budget }
    **/
   static async create(data) {
     const result = await db.query(
           `INSERT INTO trips (name,
                               username,
-                              location_id,
+                              location,
                               start_date,
                               end_date,
                               budget)
            VALUES ($1, $2, $3, $4, $5, $6)
-           RETURNING trip_id AS "tripId", name, username, location_id AS "locationId", start_date AS "startDate", end_date AS "endDate", budget`,
+           RETURNING trip_id AS "tripId", name, username, location, start_date AS "startDate", end_date AS "endDate", budget`,
         [
           data.name,
           data.username,
-          data.locationId,
+          data.location,
           data.startDate,
           data.endDate,
           data.budget,
@@ -41,15 +41,15 @@ class Trip {
    * searchFilters (all optional):
    * - name
    * - username
-   * - locationId
+   * - location
    *
-   * Returns [{ tripId, username, locationId, startDate, endDate, budget }, ...]
+   * Returns [{ tripId, username, location, startDate, endDate, budget }, ...]
    * */
-  static async findAll({ name, username, locationId } = {}) {
+  static async findAll({ name, username, location } = {}) {
     let query = `SELECT name,
                         trip_id AS "tripId",
                         username,
-                        location_id AS "locationId",
+                        location,
                         start_date AS "startDate",
                         end_date AS "endDate",
                         budget
@@ -67,9 +67,9 @@ class Trip {
       whereExpressions.push(`username = $${queryValues.length}`);
     }
 
-    if (locationId !== undefined) {
-      queryValues.push(locationId);
-      whereExpressions.push(`location_id = $${queryValues.length}`);
+    if (location !== undefined) {
+      queryValues.push(location);
+      whereExpressions.push(`location = $${queryValues.length}`);
     }
 
     if (whereExpressions.length > 0) {
@@ -83,7 +83,7 @@ class Trip {
 
   /** Given a trip id, return data about trip.
    *
-   * Returns { tripId, name, username, locationId, startDate, endDate, budget }
+   * Returns { tripId, name, username, location, startDate, endDate, budget }
    *
    * Throws NotFoundError if not found.
    **/
@@ -92,7 +92,7 @@ class Trip {
           `SELECT trip_id AS "tripId",
                   name,
                   username,
-                  location_id AS "locationId",
+                  location,
                   start_date AS "startDate",
                   end_date AS "endDate",
                   budget
@@ -110,9 +110,9 @@ class Trip {
    *
    * This is a "partial update" --- only changes provided fields.
    *
-   * Data can include: { name, locationId, startDate, endDate, budget }
+   * Data can include: { name, location, startDate, endDate, budget }
    *
-   * Returns { tripId, name, username, locationId, startDate, endDate, budget }
+   * Returns { tripId, name, username, location, startDate, endDate, budget }
    *
    * Throws NotFoundError if not found.
    */
@@ -120,7 +120,7 @@ class Trip {
     const { setCols, values } = sqlForPartialUpdate(
         data,
         {
-          locationId: "location_id",
+          location: "location",
           startDate: "start_date",
           endDate: "end_date"
         });
@@ -132,7 +132,7 @@ class Trip {
                       RETURNING trip_id AS "tripId",
                                 name,
                                 username,
-                                location_id AS "locationId",
+                                location,
                                 start_date AS "startDate",
                                 end_date AS "endDate",
                                 budget`;

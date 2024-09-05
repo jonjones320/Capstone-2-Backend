@@ -21,7 +21,7 @@ describe("create", function () {
   const newTrip = {
     name: "Trip4",
     username: "u1",
-    locationId: "14",
+    location: "14",
     startDate: new Date("2026-04-01T07:00:00.000Z").toISOString(),
     endDate: new Date("2026-04-10T07:00:00.000Z").toISOString(),
     budget: "4000.00",
@@ -43,7 +43,7 @@ describe("create", function () {
       `SELECT trip_id AS "tripId", 
               name, 
               username, 
-              location_id AS "locationId", 
+              location AS "location", 
               start_date AS "startDate", 
               end_date AS "endDate", 
               budget
@@ -61,7 +61,7 @@ describe("create", function () {
       tripId,
       name: newTrip.name,
       username: newTrip.username,
-      locationId: newTrip.locationId,
+      location: newTrip.location,
       startDate: newTrip.startDate,
       endDate: newTrip.endDate,
       budget: newTrip.budget,
@@ -78,7 +78,7 @@ describe("get", function () {
       tripId: 1,
       name: "Trip1",
       username: "u1",
-      locationId: "l1",
+      location: "l1",
       startDate: new Date("2026-01-01T08:00:00.000Z"),
       endDate: new Date("2026-01-10T08:00:00.000Z"),
       budget: "1000.00",
@@ -110,7 +110,7 @@ describe("update", function () {
     expect(trip).toEqual({
       tripId: 1,
       username: "u1",
-      locationId: "l1",
+      location: "l1",
       ...updateData,
     });
 
@@ -118,7 +118,7 @@ describe("update", function () {
       `SELECT trip_id AS "tripId", 
               name, 
               username, 
-              location_id AS "locationId", 
+              location AS "location", 
               start_date AS "startDate", 
               end_date AS "endDate", 
               budget
@@ -130,7 +130,7 @@ describe("update", function () {
         tripId: 1,
         name: "NewTrip1",
         username: "u1",
-        locationId: "l1",
+        location: "l1",
         startDate: new Date("2026-01-05T08:00:00.000Z"),
         endDate: new Date("2026-01-15T08:00:00.000Z"),
         budget: "1500.00",
