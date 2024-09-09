@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "http://our.company.com/flightUpdate.schema.json",
+  "$id": "http://ranner.com/flightUpdate.schema.json",
   "type": "object",
   "properties": {
     "flightNumber": {
