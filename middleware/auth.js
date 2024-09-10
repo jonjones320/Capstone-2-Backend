@@ -17,13 +17,19 @@ const { UnauthorizedError } = require("../expressError");
 
 function authenticateJWT(req, res, next) {
   try {
+    // console.log("-----BE-AUTH, authenticateJWT: ", req.headers.authorization);
     const authHeader = req.headers && req.headers.authorization;
     if (authHeader) {
       const token = authHeader.replace(/^[Bb]earer /, "").trim();
-      res.locals.user = jwt.verify(token, SECRET_KEY);
+      const user = jwt.verify(token, SECRET_KEY);
+      // console.log("auth.js - authenticateJWT - USER: ", user);
+      res.locals.user = user;
+    } else {
+      // console.debug("auth.js - authenticateJWT - NO AUTH HEADER");
     }
     return next();
   } catch (err) {
+    console.log("auth.js - authenticateJWT - ERR", err);
     return next();
   }
 }
@@ -35,9 +41,11 @@ function authenticateJWT(req, res, next) {
 
 function ensureLoggedIn(req, res, next) {
   try {
+    // console.log("auth.js - ensureLoggedIn - RES LOCALS: ", res.locals);
     if (!res.locals.user) throw new UnauthorizedError();
     return next();
   } catch (err) {
+    // console.log("auth.js - ensureLoggedIn - ERR", err);
     return next(err);
   }
 }
