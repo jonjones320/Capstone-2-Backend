@@ -13,7 +13,8 @@ class Trip {
    *
    * Returns { tripId, username, location, startDate, endDate, budget }
    **/
-  static async create(name, username, location, startDate, endDate, budget) {
+  static async create({ name, username, location, startDate, endDate, budget }) {
+    // console.log("trip.js - Trip.create: NAME: ", name);
     const result = await db.query(
           `INSERT INTO trips (name,
                               username,
