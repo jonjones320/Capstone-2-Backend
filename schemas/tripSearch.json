@@ -13,16 +13,15 @@
       "type": "string"
     },
     "startDate": {
-      "type": "string",
-      "format": "date"
+      "type": "string"
     },
     "endDate": {
-      "type": "string",
-      "format": "date"
+      "type": "string"
     },
-    "maxBudget": {
+    "budget": {
       "type": "number",
-      "minimum": 0
+      "minimum": 0,
+      "maximum": 1000000000
     }
   },
   "additionalProperties": false,
