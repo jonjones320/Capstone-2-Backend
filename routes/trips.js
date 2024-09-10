@@ -40,9 +40,9 @@ router.get('/', ensureAdmin, async (req, res, next) => {
 });
 
 // GET /trips/:id: get a single trip by id
-router.get('/:id', ensureCorrectUserOrAdmin, validateTripSearch, async (req, res, next) => {
+router.get('/:id', ensureLoggedIn, validateTripSearch, async (req, res, next) => {
   try {
-    const trip = await Trip.findOne(req.params.id);
+    const trip = await Trip.get(req.params.id);
     return res.json({ trip });
   } catch (err) {
     return next(err);
