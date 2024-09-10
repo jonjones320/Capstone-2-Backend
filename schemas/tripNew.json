@@ -6,29 +6,28 @@
     "name": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 30
+      "maxLength": 100
     },
     "username": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 30
+      "maxLength": 50
     },
     "location": {
       "type": "string",
       "minLength": 1,
-      "maxLength": 100
+      "maxLength": 50
     },
     "startDate": {
-      "type": "string",
-      "format": "date"
+      "type": "string"
     },
     "endDate": {
-      "type": "string",
-      "format": "date"
+      "type": "string"
     },
     "budget": {
       "type": "number",
-      "minimum": 0
+      "minimum": 0,
+      "maximum": 1000000000
     }
   },
   "additionalProperties": false,
