@@ -22,6 +22,10 @@ router.post('/', authenticateJWT, ensureLoggedIn, validateTripNew, async (req, r
 // PATCH /trips/:id: update a trip
 router.patch('/:id', ensureCorrectUserOrAdmin, validateTripUpdate, async (req, res, next) => {
   try {
+    const { startDate, endDate } =req.body;
+    if (startDate) req.body.startDate = new Date(startDate);
+    if (endDate) req.body.endDate = new Date(endDate);
+
     const trip = await Trip.update(req.body);
     return res.status(201).json({ trip });
   } catch (err) {
