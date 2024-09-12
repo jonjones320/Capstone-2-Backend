@@ -19,12 +19,10 @@
       "maxLength": 100
     },
     "startDate": {
-      "type": "string",
-      "format": "date"
+      "type": "string"
     },
     "endDate": {
-      "type": "string",
-      "format": "date"
+      "type": "string"
     },
     "budget": {
       "type": "number",
