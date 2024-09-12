@@ -21,8 +21,7 @@
     "email": {
       "type": "string",
       "minLength": 6,
-      "maxLength": 67,
-      "format": "email"
+      "maxLength": 67
     }
   },
   "additionalProperties": false,
