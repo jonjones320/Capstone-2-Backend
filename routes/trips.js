@@ -10,11 +10,9 @@ const { validateTripNew,
 // POST /trips: create a new trip
 router.post('/', authenticateJWT, ensureLoggedIn, validateTripNew, async (req, res, next) => {
   try {
-    // console.log("trips.js - post/trips: REQ.BODY", req.body);
     const trip = await Trip.create(req.body);
     return res.status(201).json({ trip });
   } catch (err) {
-    // console.log("trips.js - post/trips - catch: ERR", err);
     return next(err);
   }
 });
@@ -22,11 +20,13 @@ router.post('/', authenticateJWT, ensureLoggedIn, validateTripNew, async (req, r
 // PATCH /trips/:id: update a trip
 router.patch('/:id', ensureCorrectUserOrAdmin, validateTripUpdate, async (req, res, next) => {
   try {
-    const { startDate, endDate } =req.body;
+    const { startDate, endDate } = req.body;
+
     if (startDate) req.body.startDate = new Date(startDate);
     if (endDate) req.body.endDate = new Date(endDate);
 
-    const trip = await Trip.update(req.body);
+    const trip = await Trip.update(req.params.id, req.body);
+    
     return res.status(201).json({ trip });
   } catch (err) {
     return next(err);
