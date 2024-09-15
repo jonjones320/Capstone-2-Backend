@@ -43,6 +43,16 @@ router.get('/', ensureAdmin, async (req, res, next) => {
   }
 });
 
+// GET /trips/:username: get all trips for a user
+router.get('/:username', ensureCorrectUserOrAdmin, async (req, res, next) => {
+  try {
+    const trips = await Trip.findAll({ username: req.params.username });
+    return res.json({ trips });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 // GET /trips/:id: get a single trip by id
 router.get('/:id', ensureLoggedIn, validateTripSearch, async (req, res, next) => {
   try {
