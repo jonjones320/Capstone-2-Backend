@@ -54,11 +54,12 @@ router.get('/:username', ensureCorrectUserOrAdmin, async (req, res, next) => {
 });
 
 // GET /trips/:id: get a single trip by id
-router.get('/:id', ensureLoggedIn, validateTripSearch, async (req, res, next) => {
+router.get('/:id', ensureCorrectUserOrAdmin, async (req, res, next) => {
   try {
     const trip = await Trip.get(req.params.id);
     return res.json({ trip });
   } catch (err) {
+    console.debug("trips.js - GET /trips/:id - CATCH ERR: ", err);
     return next(err);
   }
 });   
