@@ -3,10 +3,10 @@
 /** Routes for flights. */
 
 const express = require("express");
-const router = express.Router({ mergeParams: true });
+const router = new express.Router();
 const amadeus = require("../amadeus"); // Access the Amadeus SDK
 const { BadRequestError } = require("../expressError");
-const { ensureAdmin } = require("../middleware/auth");
+const { ensureAdmin, ensureLoggedIn } = require("../middleware/auth");
 const { validateFlightNew, 
         validateFlightUpdate, 
         validateFlightSearch 
@@ -15,7 +15,7 @@ const { validateFlightNew,
 
   
 // GET Flight Offers Search
-router.get("/flight/offers", validateFlightSearch, async function (req, res, next) {
+router.get("/offers", async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightOffersSearch.get({
       originLocationCode: req.query.originCode,
@@ -36,7 +36,7 @@ router.get("/flight/offers", validateFlightSearch, async function (req, res, nex
 });
 
 // Flight Inspiration Search
-router.get("/flight/destinations", validateFlightSearch, async function (req, res, next) {
+router.get("/destinations", validateFlightSearch, async function (req, res, next) {
 try {
   const response = await amadeus.shopping.flightDestinations.get({
     origin: req.query.origin
@@ -49,7 +49,7 @@ try {
 });
 
 // Flight Date Search
-router.get("/flight/dates", validateFlightSearch, async function (req, res, next) {
+router.get("/dates", validateFlightSearch, async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightDates.get({
       origin: req.query.origin,
@@ -64,7 +64,7 @@ router.get("/flight/dates", validateFlightSearch, async function (req, res, next
 
 
 // POST Flight Offers Search
-router.post("/flight/offers", validateFlightSearch, async function (req, res, next) {
+router.post("/offers", validateFlightSearch, async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightOffersSearch.post(JSON.stringify(req.body));
     return res.json(response.data);
@@ -75,7 +75,7 @@ router.post("/flight/offers", validateFlightSearch, async function (req, res, ne
 });
 
 // GET Flight Offers Price
-router.get("/flight/offers/price", async function (req, res, next) {
+router.get("/offers/price", async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightOffersSearch.get({
       originLocationCode: req.query.origin,
@@ -99,7 +99,7 @@ router.get("/flight/offers/price", async function (req, res, next) {
 });
 
 // POST Flight Offers Price with additional parameters
-router.post("/flight/offers/price", async function (req, res, next) {
+router.post("/offers/price", async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightOffers.pricing.post(JSON.stringify(req.body), { include: 'bags' });
     return res.json(response.data);
@@ -110,7 +110,7 @@ router.post("/flight/offers/price", async function (req, res, next) {
 });
 
 // POST Flight Create Orders
-router.post("/flight/orders", async function (req, res, next) {
+router.post("/orders", async function (req, res, next) {
   try {
     const response = await amadeus.booking.flightOrders.post(JSON.stringify(req.body));
     return res.json(response.data);
@@ -121,7 +121,7 @@ router.post("/flight/orders", async function (req, res, next) {
 });
 
 // GET Retrieve flight order with ID 'XXX'
-router.get("/flight/orders/:id", async function (req, res, next) {
+router.get("/orders/:id", async function (req, res, next) {
   try {
     const response = await amadeus.booking.flightOrder(req.params.id).get();
     return res.json(response.data);
@@ -132,7 +132,7 @@ router.get("/flight/orders/:id", async function (req, res, next) {
 });
 
 // DELETE Cancel flight order with ID 'XXX'
-router.delete("/flight/orders/:id", async function (req, res, next) {
+router.delete("/orders/:id", async function (req, res, next) {
   try {
     const response = await amadeus.booking.flightOrder(req.params.id).delete();
     return res.json(response.data);
@@ -143,7 +143,7 @@ router.delete("/flight/orders/:id", async function (req, res, next) {
 });
 
 // GET Flight SeatMap Display
-router.get("/flight/seatmaps", async function (req, res, next) {
+router.get("/seatmaps", async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightOffersSearch.get({
       originLocationCode: req.query.origin,
@@ -164,7 +164,7 @@ router.get("/flight/seatmaps", async function (req, res, next) {
 });
 
 // GET Retrieve the seat map for flight order with ID 'XXX'
-router.get("/flight/orders/:id/seatmap", async function (req, res, next) {
+router.get("/orders/:id/seatmap", async function (req, res, next) {
   try {
     const response = await amadeus.shopping.seatmaps.get({
       'flight-orderId': req.params.id
@@ -177,7 +177,7 @@ router.get("/flight/orders/:id/seatmap", async function (req, res, next) {
 });
 
 // POST Flight Availabilities Search
-router.post("/flight/availabilities", async function (req, res, next) {
+router.post("/availabilities", async function (req, res, next) {
   try {
     const response = await amadeus.shopping.availability.flightAvailabilities.post(JSON.stringify(req.body));
     return res.json(response.data);
@@ -188,7 +188,7 @@ router.post("/flight/availabilities", async function (req, res, next) {
 });
 
 // POST Branded Fares Upsell
-router.post("/flight/offers/upselling", async function (req, res, next) {
+router.post("/offers/upselling", async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightOffers.upselling.post(JSON.stringify(req.body));
     return res.json(response.data);
@@ -199,7 +199,7 @@ router.post("/flight/offers/upselling", async function (req, res, next) {
 });
 
 // GET Flight Choice Prediction
-router.get("/flight/offers/prediction", async function (req, res, next) {
+router.get("/offers/prediction", async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightOffersSearch.get({
       originLocationCode: req.query.origin,
@@ -231,7 +231,7 @@ router.get("/airline/checkinLinks", async function (req, res, next) {
 });
 
 // GET On-Demand Flight Status
-router.get("/flight/status", async function (req, res, next) {
+router.get("/status", async function (req, res, next) {
   try {
     const response = await amadeus.schedule.flights.get({
       carrierCode: req.query.carrierCode,
@@ -246,7 +246,7 @@ router.get("/flight/status", async function (req, res, next) {
 });
 
 // GET Flight Busiest Traveling Period
-router.get("/flight/busiestPeriod", async function (req, res, next) {
+router.get("/busiestPeriod", async function (req, res, next) {
   try {
       const response = await amadeus.travel.analytics.airTraffic.busiestPeriod.get({
           cityCode: req.query.cityCode,
