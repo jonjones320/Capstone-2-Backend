@@ -45,7 +45,7 @@ class Trip {
    *
    * Returns [{ tripId, username, location, startDate, endDate, budget }, ...]
    * */
-  static async findAll({ name, username, location } = {}) {
+  static async findAll({ name, username, location, startDate, endDate } = {}) {
     let query = `SELECT name,
                         trip_id AS "tripId",
                         username,
@@ -57,19 +57,29 @@ class Trip {
     let whereExpressions = [];
     let queryValues = [];
 
-    if (name !== undefined) {
-      queryValues.push(name);
-      whereExpressions.push(`name = $${queryValues.length}`);
+    if (name) {
+      queryValues.push(`%${name}%`);
+      whereExpressions.push(`name ILIKE $${queryValues.length}`);
+    }
+    
+    if (username) {
+      queryValues.push(`%${username}%`);
+      whereExpressions.push(`username ILIKE $${queryValues.length}`);
     }
 
-    if (username !== undefined) {
-      queryValues.push(username);
-      whereExpressions.push(`username = $${queryValues.length}`);
+    if (location) {
+      queryValues.push(`%${location}%`);
+      whereExpressions.push(`location ILIKE $${queryValues.length}`);
+    }
+    
+    if (startDate) {
+      queryValues.push(startDate);
+      whereExpressions.push(`start_date >= $${queryValues.length}`);
     }
 
-    if (location !== undefined) {
-      queryValues.push(location);
-      whereExpressions.push(`location = $${queryValues.length}`);
+    if (endDate) {
+      queryValues.push(endDate);
+      whereExpressions.push(`end_date <= $${queryValues.length}`);
     }
 
     if (whereExpressions.length > 0) {
