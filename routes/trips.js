@@ -55,10 +55,19 @@ router.patch('/:id', ensureCorrectUserOrAdmin, validateTripUpdate, async (req, r
   }
 });
 
-// GET /trips: get all trips  
-router.get('/', ensureAdmin, async (req, res, next) => {
+// GET /trips: get all trips (with optional filtering)  
+router.get('/', ensureLoggedIn, async (req, res, next) => {
   try {
-    const trips = await Trip.findAll(req.query);
+    // Collect filters from query parameters
+    const filters = {
+      name: req.query.name,
+      username: req.query.username,
+      location: req.query.location,
+      startDate: req.query.startDate,
+      endDate: req.query.endDate,
+    };
+
+    const trips = await Trip.findAll(filters);
     return res.json({ trips });
   } catch (err) {
     return next(err);
