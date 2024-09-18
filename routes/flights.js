@@ -13,18 +13,39 @@ const { validateFlightNew,
       } = require('../middleware/validateSchema');
 
 
+  
+// GET Flight Offers Search
+router.get("/flight/offers", validateFlightSearch, async function (req, res, next) {
+  try {
+    const response = await amadeus.shopping.flightOffersSearch.get({
+      originLocationCode: req.query.originCode,
+      destinationLocationCode: req.query.destinationCode,
+      departureDate: req.query.dateOfDeparture,
+      adults: req.query.adults,
+      max: '10'
+    });
+    if (response.result) {
+      return res.json(response.result);
+    } else {
+      throw new BadRequestError("No flights found");
+    }
+  } catch (error) {
+    console.error("Error fetching flight offers", error);
+    return res.status(500).json({ error: error.message });
+  }
+});
 
 // Flight Inspiration Search
 router.get("/flight/destinations", validateFlightSearch, async function (req, res, next) {
-  try {
-    const response = await amadeus.shopping.flightDestinations.get({
-      origin: req.query.origin
-    });
-    return res.json(response.data);
-  } catch (error) {
-    console.error("Error fetching flight destinations", error);
-    return res.status(500).json({ error: error.message });
-  }
+try {
+  const response = await amadeus.shopping.flightDestinations.get({
+    origin: req.query.origin
+  });
+  return res.json(response.data);
+} catch (error) {
+  console.error("Error fetching flight destinations", error);
+  return res.status(500).json({ error: error.message });
+}
 });
 
 // Flight Date Search
@@ -41,25 +62,6 @@ router.get("/flight/dates", validateFlightSearch, async function (req, res, next
   }
 });
 
-// GET Flight Offers Search
-router.get("/flight/offers", validateFlightSearch, async function (req, res, next) {
-  try {
-    const response = await amadeus.shopping.flightOffersSearch.get({
-      originLocationCode: req.query.origin,
-      destinationLocationCode: req.query.destination,
-      departureDate: req.query.departureDate,
-      adults: req.query.adults
-    });
-    if (response.data) {
-      return res.json(response.data);
-    } else {
-      throw new BadRequestError("No flights found");
-    }
-  } catch (error) {
-    console.error("Error fetching flight offers", error);
-    return res.status(500).json({ error: error.message });
-  }
-});
 
 // POST Flight Offers Search
 router.post("/flight/offers", validateFlightSearch, async function (req, res, next) {
@@ -240,6 +242,21 @@ router.get("/flight/status", async function (req, res, next) {
   } catch (error) {
     console.error("Error fetching flight status", error);
     return res.status(500).json({ error: error.message });
+  }
+});
+
+// GET Flight Busiest Traveling Period
+router.get("/flight/busiestPeriod", async function (req, res, next) {
+  try {
+      const response = await amadeus.travel.analytics.airTraffic.busiestPeriod.get({
+          cityCode: req.query.cityCode,
+          period: req.query.period,
+          direction: amadeus.direction.arriving
+      });
+      return res.json(response.data);
+  } catch (error) {
+      console.error("Error fetching busiest traveling period", error);
+      return res.status(500).json({ error: error.message });
   }
 });
 

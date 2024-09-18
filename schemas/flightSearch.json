@@ -11,11 +11,11 @@
       "type": "string",
       "minLength": 1
     },
-    "origin": {
+    "originCode": {
       "type": "string",
       "minLength": 1
     },
-    "destination": {
+    "destinationCode": {
       "type": "string",
       "minLength": 1
     }

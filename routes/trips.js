@@ -1,11 +1,33 @@
+"use strict";
+
+/** Routes for trips. */
+
 const express = require('express');
 const router = new express.Router();
+const amadeus = require("../amadeus"); // Access the Amadeus SDK
 const Trip = require('../models/trip');
-const { ensureCorrectUserOrAdmin, ensureAdmin, ensureLoggedIn, authenticateJWT } = require("../middleware/auth");
+
+const { ensureCorrectUserOrAdmin, 
+        ensureAdmin, 
+        ensureLoggedIn, 
+        authenticateJWT 
+      } = require("../middleware/auth");
 const { validateTripNew, 
         validateTripUpdate, 
         validateTripSearch 
       } = require('../middleware/validateSchema');
+
+
+// POST Trip Parser API V3
+router.post("/tripParser", async function (req, res, next) {
+  try {
+      const response = await amadeus.travel.tripParser.post(JSON.stringify(req.body));
+      return res.json(response.data);
+  } catch (error) {
+      console.error("Error parsing trip information", error);
+      return res.status(500).json({ error: error.message });
+  }
+});
 
 // POST /trips: create a new trip
 router.post('/', authenticateJWT, ensureLoggedIn, validateTripNew, async (req, res, next) => {
@@ -43,8 +65,8 @@ router.get('/', ensureAdmin, async (req, res, next) => {
   }
 });
 
-// GET /trips/:username: get all trips for a user
-router.get('/:username', ensureCorrectUserOrAdmin, async (req, res, next) => {
+// GET /trips/user/:username: get all trips for a user
+router.get('/user/:username', ensureCorrectUserOrAdmin, async (req, res, next) => {
   try {
     const trips = await Trip.findAll({ username: req.params.username });
     return res.json({ trips });
