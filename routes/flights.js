@@ -17,13 +17,21 @@ const { validateFlightNew,
 // GET Flight Offers Search
 router.get("/offers", async function (req, res, next) {
   try {
-    const response = await amadeus.shopping.flightOffersSearch.get({
-      originLocationCode: req.query.originCode,
-      destinationLocationCode: req.query.destinationCode,
-      departureDate: req.query.dateOfDeparture,
-      adults: req.query.adults,
-      max: '10'
-    });
+    console.log("flights.js: GET /flight/offers", req.query);
+
+    const { originLocationCode, destinationLocationCode, departureDate, returnDate, adults } = req.query;
+
+    // Prepare data for Amadeus flight search
+    const flightSearchParams = {
+      originLocationCode,
+      destinationLocationCode,
+      departureDate,
+      returnDate,
+      adults,
+    };
+
+    const response = await amadeus.shopping.flightOffersSearch.get(flightSearchParams);
+
     if (response.result) {
       return res.json(response.result);
     } else {
@@ -36,7 +44,7 @@ router.get("/offers", async function (req, res, next) {
 });
 
 // Flight Inspiration Search
-router.get("/destinations", validateFlightSearch, async function (req, res, next) {
+router.get("/destinations", async function (req, res, next) {
 try {
   const response = await amadeus.shopping.flightDestinations.get({
     origin: req.query.origin
