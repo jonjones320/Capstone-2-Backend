@@ -43,6 +43,23 @@ router.get("/offers", async function (req, res, next) {
   }
 });
 
+// Airports and City Search (autocomplete)
+// Find all the cities and airports starting by a keyword
+router.get("/airport-suggestions", async function (req, res, next) {
+  try {
+      const { query } = req.query;
+      const response = await amadeus.referenceData.locations.get({
+          keyword: query,
+          subType: 'AIRPORT,CITY',
+          max: 5
+      });
+      return res.json(response.data);
+  } catch (error) {
+      console.error("Error fetching locations", error);
+      return res.status(500).json({ error: error.message });
+  }
+});
+
 // Flight Inspiration Search
 router.get("/destinations", async function (req, res, next) {
 try {
