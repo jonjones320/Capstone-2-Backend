@@ -20,21 +20,6 @@ router.get("/airport/directDestinations", async function (req, res, next) {
     }
 });
 
-// Airports and City Search (autocomplete)
-// Find all the cities and airports starting by a keyword
-router.get("/flight/locations", async function (req, res, next) {
-    try {
-        const response = await amadeus.referenceData.locations.get({
-            keyword: req.query.keyword,
-            subType: amadeus.location.any
-        });
-        return res.json(response.data);
-    } catch (error) {
-        console.error("Error fetching locations", error);
-        return res.status(500).json({ error: error.message });
-    }
-});
-
 // Get a specific city or airport based on its id
 router.get("/flight/locations/:id", async function (req, res, next) {
     try {
