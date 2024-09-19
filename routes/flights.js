@@ -45,18 +45,26 @@ router.get("/offers", async function (req, res, next) {
 
 // Airports and City Search (autocomplete)
 // Find all the cities and airports starting by a keyword
-router.get("/airport-suggestions", async function (req, res, next) {
+router.get('/airport-suggestions', async (req, res, next) => {
+  const { keyword } = req.query; // Extract the keyword from query parameters
+
+  if (!keyword) {
+    return res.status(400).json({ error: "keyword query parameter is required" });
+  }
+
   try {
-      const { query } = req.query;
-      const response = await amadeus.referenceData.locations.get({
-          keyword: query,
-          subType: 'AIRPORT,CITY',
-          max: 5
-      });
-      return res.json(response.data);
+    // Amadeus API call to get airport suggestions
+    const response = await amadeus.referenceData.locations.get({
+      keyword: keyword,
+      subType: 'AIRPORT,CITY',
+      'page[offset]': 0,
+      'page[limit]': 5
+    });
+
+    return res.json(response.data);
   } catch (error) {
-      console.error("Error fetching locations", error);
-      return res.status(500).json({ error: error.message });
+    console.error("Error fetching airport suggestions:", error);
+    return res.status(500).json({ error: error.message });
   }
 });
 
