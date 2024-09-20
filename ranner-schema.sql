@@ -19,7 +19,7 @@ CREATE TABLE trips (
     destination VARCHAR(50),
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    budget NUMERIC(10, 2),
+    passengers INTEGER,
     CHECK (start_date < end_date)
 );
 
