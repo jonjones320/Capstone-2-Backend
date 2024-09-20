@@ -9,16 +9,17 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 class Trip {
   /** Create a trip (from data), update db, return new trip data.
    *
-   * data should be { username, location, startDate, endDate, budget }
+   * data should be { username, origin, destination, startDate, endDate, budget }
    *
-   * Returns { tripId, username, location, startDate, endDate, budget }
+   * Returns { tripId, username, origin, destination, startDate, endDate, budget }
    **/
-  static async create({ name, username, location, startDate, endDate, budget }) {
+  static async create({ name, username, origin, destination, startDate, endDate, budget }) {
     // console.log("trip.js - Trip.create: NAME: ", name);
     const result = await db.query(
           `INSERT INTO trips (name,
                               username,
-                              location,
+                              origin,
+                              destination,
                               start_date,
                               end_date,
                               budget)
@@ -26,11 +27,12 @@ class Trip {
            RETURNING trip_id AS "tripId", 
                       name, 
                       username, 
-                      location, 
+                      origin,
+                      destination, 
                       start_date AS "startDate", 
                       end_date AS "endDate", 
                       budget`,
-        [name, username, location, startDate, endDate, budget]);
+        [name, username, origin, destination, startDate, endDate, budget]);
     let trip = result.rows[0];
     
     return trip;
@@ -41,15 +43,17 @@ class Trip {
    * searchFilters (all optional):
    * - name
    * - username
-   * - location
+   * - origin
+   * - destination
    *
-   * Returns [{ tripId, username, location, startDate, endDate, budget }, ...]
+   * Returns [{ tripId, username, origin, destination, startDate, endDate, budget }, ...]
    * */
-  static async findAll({ name, username, location, startDate, endDate } = {}) {
+  static async findAll({ name, username, origin, destination, startDate, endDate } = {}) {
     let query = `SELECT name,
                         trip_id AS "tripId",
                         username,
-                        location,
+                        origin,
+                        destination,
                         start_date AS "startDate",
                         end_date AS "endDate",
                         budget
@@ -61,22 +65,22 @@ class Trip {
       queryValues.push(`%${name}%`);
       whereExpressions.push(`name ILIKE $${queryValues.length}`);
     }
-    
     if (username) {
       queryValues.push(`%${username}%`);
       whereExpressions.push(`username ILIKE $${queryValues.length}`);
     }
-
-    if (location) {
-      queryValues.push(`%${location}%`);
+    if (origin) {
+      queryValues.push(`%${origin}%`);
       whereExpressions.push(`location ILIKE $${queryValues.length}`);
     }
-    
+    if (destination) {
+      queryValues.push(`%${destination}%`);
+      whereExpressions.push(`location ILIKE $${queryValues.length}`);
+    }
     if (startDate) {
       queryValues.push(startDate);
       whereExpressions.push(`start_date >= $${queryValues.length}`);
     }
-
     if (endDate) {
       queryValues.push(endDate);
       whereExpressions.push(`end_date <= $${queryValues.length}`);
@@ -93,7 +97,7 @@ class Trip {
 
   /** Given a trip id, return data about trip.
    *
-   * Returns { tripId, name, username, location, startDate, endDate, budget }
+   * Returns { tripId, name, username, origin, destination, startDate, endDate, budget }
    *
    * Throws NotFoundError if not found.
    **/
@@ -102,7 +106,8 @@ class Trip {
           `SELECT trip_id AS "tripId",
                   name,
                   username,
-                  location,
+                  origin,
+                  destination,
                   start_date AS "startDate",
                   end_date AS "endDate",
                   budget
@@ -120,9 +125,9 @@ class Trip {
    *
    * This is a "partial update" --- only changes provided fields.
    *
-   * Data can include: { name, location, startDate, endDate, budget }
+   * Data can include: { name, origin, destination, startDate, endDate, budget }
    *
-   * Returns { tripId, name, username, location, startDate, endDate, budget }
+   * Returns { tripId, name, username, origin, destination, startDate, endDate, budget }
    *
    * Throws NotFoundError if not found.
    */
@@ -130,7 +135,8 @@ class Trip {
     const { setCols, values } = sqlForPartialUpdate(
         data,
         {
-          location: "location",
+          origin: "origin",
+          destination: "destination",
           startDate: "start_date",
           endDate: "end_date"
         });
@@ -142,7 +148,8 @@ class Trip {
                       RETURNING trip_id AS "tripId",
                                 name,
                                 username,
-                                location,
+                                origin,
+                                destination,
                                 start_date AS "startDate",
                                 end_date AS "endDate",
                                 budget`;

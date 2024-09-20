@@ -13,7 +13,12 @@
       "minLength": 1,
       "maxLength": 30
     },
-    "location": {
+    "origin": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "destination": {
       "type": "string",
       "minLength": 1,
       "maxLength": 100

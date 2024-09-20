@@ -29,13 +29,14 @@ async function commonBeforeAll() {
   await db.query(`
     INSERT INTO trips(name, 
                       username, 
-                      location_id, 
+                      origin,
+                      destination, 
                       start_date, 
                       end_date, 
                       budget)
-    VALUES ('Trip1', 'u1', 'l1', '2026-01-01', '2026-01-10', 1000),
-           ('Trip2', 'u1', 'l2', '2026-02-01', '2026-02-10', 2000),
-           ('Trip3', 'u2', 'l3', '2026-03-01', '2026-03-10', 3000)`);
+    VALUES ('Trip1', 'u1', 'JFK', 'PAR', '2026-01-01', '2026-01-10', 1000),
+           ('Trip2', 'u1', 'SEA', 'HON', '2026-02-01', '2026-02-10', 2000),
+           ('Trip3', 'u2', 'PHX', 'SLC', '2026-03-01', '2026-03-10', 3000)`);
 
   // Insert flights
   await db.query(`

@@ -62,7 +62,8 @@ router.get('/', ensureLoggedIn, async (req, res, next) => {
     const filters = {
       name: req.query.name,
       username: req.query.username,
-      location: req.query.location,
+      origin: req.query.origin,
+      destination: req.query.destination,
       startDate: req.query.startDate,
       endDate: req.query.endDate,
     };
