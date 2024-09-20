@@ -25,7 +25,7 @@ describe("create", function () {
     destination: "JFK",
     startDate: new Date("2026-04-01T07:00:00.000Z").toISOString(),
     endDate: new Date("2026-04-10T07:00:00.000Z").toISOString(),
-    budget: "4000.00",
+    passengers: 1,
   };
 
   test("works", async function () {
@@ -48,7 +48,7 @@ describe("create", function () {
               destination,
               start_date AS "startDate", 
               end_date AS "endDate", 
-              budget
+              passengers
        FROM trips
        WHERE trip_id = $1`,
       [tripId]
@@ -67,7 +67,7 @@ describe("create", function () {
       destination: newTrip.destination,
       startDate: newTrip.startDate,
       endDate: newTrip.endDate,
-      budget: newTrip.budget,
+      passengers: newTrip.passengers,
     });
   });
 });
@@ -85,7 +85,7 @@ describe("get", function () {
       destination: "LAX",
       startDate: new Date("2026-01-01T08:00:00.000Z"),
       endDate: new Date("2026-01-10T08:00:00.000Z"),
-      budget: "1000.00",
+      passengers: 1,
     });
   });
 
@@ -106,7 +106,7 @@ describe("update", function () {
     name: "NewTrip1",
     startDate: new Date("2026-01-05T08:00:00.000Z"),
     endDate: new Date("2026-01-15T08:00:00.000Z"),
-    budget: "1500.00",
+    passengers: 2,
   };
 
   test("works", async function () {
@@ -127,7 +127,7 @@ describe("update", function () {
               destination,
               start_date AS "startDate", 
               end_date AS "endDate", 
-              budget
+              passengers
        FROM trips
        WHERE trip_id = '1'`
     );
@@ -140,7 +140,7 @@ describe("update", function () {
         destination: "LAX",
         startDate: new Date("2026-01-05T08:00:00.000Z"),
         endDate: new Date("2026-01-15T08:00:00.000Z"),
-        budget: "1500.00",
+        passengers: 2,
       },
     ]);
   });

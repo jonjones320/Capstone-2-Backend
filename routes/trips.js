@@ -66,6 +66,7 @@ router.get('/', ensureLoggedIn, async (req, res, next) => {
       destination: req.query.destination,
       startDate: req.query.startDate,
       endDate: req.query.endDate,
+      passengers: req.query.passengers
     };
 
     const trips = await Trip.findAll(filters);

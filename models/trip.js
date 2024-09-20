@@ -9,11 +9,11 @@ const { sqlForPartialUpdate } = require("../helpers/sql");
 class Trip {
   /** Create a trip (from data), update db, return new trip data.
    *
-   * data should be { username, origin, destination, startDate, endDate, budget }
+   * data should be { username, origin, destination, startDate, endDate, passengers }
    *
-   * Returns { tripId, username, origin, destination, startDate, endDate, budget }
+   * Returns { tripId, username, origin, destination, startDate, endDate, passengers }
    **/
-  static async create({ name, username, origin, destination, startDate, endDate, budget }) {
+  static async create({ name, username, origin, destination, startDate, endDate, passengers }) {
     // console.log("trip.js - Trip.create: NAME: ", name);
     const result = await db.query(
           `INSERT INTO trips (name,
@@ -22,7 +22,7 @@ class Trip {
                               destination,
                               start_date,
                               end_date,
-                              budget)
+                              passengers)
            VALUES ($1, $2, $3, $4, $5, $6)
            RETURNING trip_id AS "tripId", 
                       name, 
@@ -31,8 +31,8 @@ class Trip {
                       destination, 
                       start_date AS "startDate", 
                       end_date AS "endDate", 
-                      budget`,
-        [name, username, origin, destination, startDate, endDate, budget]);
+                      passengers`,
+        [name, username, origin, destination, startDate, endDate, passengers]);
     let trip = result.rows[0];
     
     return trip;
@@ -46,7 +46,7 @@ class Trip {
    * - origin
    * - destination
    *
-   * Returns [{ tripId, username, origin, destination, startDate, endDate, budget }, ...]
+   * Returns [{ tripId, username, origin, destination, startDate, endDate, passengers }, ...]
    * */
   static async findAll({ name, username, origin, destination, startDate, endDate } = {}) {
     let query = `SELECT name,
@@ -56,7 +56,7 @@ class Trip {
                         destination,
                         start_date AS "startDate",
                         end_date AS "endDate",
-                        budget
+                        passengers
                  FROM trips`;
     let whereExpressions = [];
     let queryValues = [];
@@ -71,11 +71,11 @@ class Trip {
     }
     if (origin) {
       queryValues.push(`%${origin}%`);
-      whereExpressions.push(`location ILIKE $${queryValues.length}`);
+      whereExpressions.push(`origin ILIKE $${queryValues.length}`);
     }
     if (destination) {
       queryValues.push(`%${destination}%`);
-      whereExpressions.push(`location ILIKE $${queryValues.length}`);
+      whereExpressions.push(`destination ILIKE $${queryValues.length}`);
     }
     if (startDate) {
       queryValues.push(startDate);
@@ -84,6 +84,10 @@ class Trip {
     if (endDate) {
       queryValues.push(endDate);
       whereExpressions.push(`end_date <= $${queryValues.length}`);
+    }
+    if (passengers) {
+      queryValues.push(passengers);
+      whereExpressions.push(`passengers <= $${queryValues.length}`);
     }
 
     if (whereExpressions.length > 0) {
@@ -97,7 +101,7 @@ class Trip {
 
   /** Given a trip id, return data about trip.
    *
-   * Returns { tripId, name, username, origin, destination, startDate, endDate, budget }
+   * Returns { tripId, name, username, origin, destination, startDate, endDate, passengers }
    *
    * Throws NotFoundError if not found.
    **/
@@ -110,7 +114,7 @@ class Trip {
                   destination,
                   start_date AS "startDate",
                   end_date AS "endDate",
-                  budget
+                  passengers
            FROM trips
            WHERE trip_id = $1`, [id]);
 
@@ -125,9 +129,9 @@ class Trip {
    *
    * This is a "partial update" --- only changes provided fields.
    *
-   * Data can include: { name, origin, destination, startDate, endDate, budget }
+   * Data can include: { name, origin, destination, startDate, endDate, passengers }
    *
-   * Returns { tripId, name, username, origin, destination, startDate, endDate, budget }
+   * Returns { tripId, name, username, origin, destination, startDate, endDate, passengers }
    *
    * Throws NotFoundError if not found.
    */
@@ -152,7 +156,7 @@ class Trip {
                                 destination,
                                 start_date AS "startDate",
                                 end_date AS "endDate",
-                                budget`;
+                                passengers`;
     const result = await db.query(querySql, [...values, id]);
     const trip = result.rows[0];
 
