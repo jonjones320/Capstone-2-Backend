@@ -3,6 +3,7 @@
 const db = require("../db");
 const { NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
+const { format, parseISO } = require('date-fns');
 
 /** Related functions for trips. */
 
@@ -14,7 +15,7 @@ class Trip {
    * Returns { tripId, username, origin, destination, startDate, endDate, passengers }
    **/
   static async create({ name, username, origin, destination, startDate, endDate, passengers }) {
-    console.log("trip.js - Trip.create: NAME: ", name);
+    console.log("trip.js - Trip.create: startDate, endDate: ", startDate, endDate);
     const result = await db.query(
           `INSERT INTO trips (name,
                               username,
@@ -34,6 +35,10 @@ class Trip {
                       passengers`,
         [name, username, origin, destination, startDate, endDate, passengers]);
     let trip = result.rows[0];
+
+    // Format dates to match Amadeus API requirements.
+    trip.startDate = format(parseISO(trip.startDate), 'yyyy-MM-dd');
+    trip.endDate = format(parseISO(trip.endDate), 'yyyy-MM-dd');
     
     return trip;
   }
