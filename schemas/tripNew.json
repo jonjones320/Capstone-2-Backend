@@ -29,10 +29,9 @@
     "endDate": {
       "type": "string"
     },
-    "budget": {
+    "passengers": {
       "type": "number",
-      "minimum": 0,
-      "maximum": 1000000000
+      "minimum": 1
     }
   },
   "additionalProperties": false,

@@ -14,7 +14,7 @@ class Trip {
    * Returns { tripId, username, origin, destination, startDate, endDate, passengers }
    **/
   static async create({ name, username, origin, destination, startDate, endDate, passengers }) {
-    // console.log("trip.js - Trip.create: NAME: ", name);
+    console.log("trip.js - Trip.create: NAME: ", name);
     const result = await db.query(
           `INSERT INTO trips (name,
                               username,
@@ -23,7 +23,7 @@ class Trip {
                               start_date,
                               end_date,
                               passengers)
-           VALUES ($1, $2, $3, $4, $5, $6)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)
            RETURNING trip_id AS "tripId", 
                       name, 
                       username, 
