@@ -48,7 +48,7 @@ class Trip {
    *
    * Returns [{ tripId, username, origin, destination, startDate, endDate, passengers }, ...]
    * */
-  static async findAll({ name, username, origin, destination, startDate, endDate } = {}) {
+  static async findAll({ name, username, origin, destination, startDate, endDate, passengers } = {}) {
     let query = `SELECT name,
                         trip_id AS "tripId",
                         username,
