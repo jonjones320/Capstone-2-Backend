@@ -17,8 +17,8 @@ CREATE TABLE trips (
     username VARCHAR(50) REFERENCES users(username) ON DELETE CASCADE,
     origin VARCHAR(50),
     destination VARCHAR(50),
-    start_date VARCHAR(15) NOT NULL,
-    end_date VARCHAR(15) NOT NULL,
+    start_date VARCHAR(35) NOT NULL,
+    end_date VARCHAR(35) NOT NULL,
     passengers INTEGER,
     CHECK (start_date < end_date)
 );
