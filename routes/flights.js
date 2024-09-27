@@ -6,19 +6,53 @@ const express = require("express");
 const router = new express.Router();
 const amadeus = require("../amadeus"); // Access the Amadeus SDK
 const { BadRequestError } = require("../expressError");
-const { ensureAdmin, ensureLoggedIn } = require("../middleware/auth");
+const { ensureCorrectUserOrAdmin, 
+        ensureAdmin, 
+        ensureLoggedIn, 
+        authenticateJWT 
+      } = require("../middleware/auth");
 const { validateFlightNew, 
         validateFlightUpdate, 
         validateFlightSearch 
       } = require('../middleware/validateSchema');
+const Flight = require("../models/flight")
 
 
+// POST Create flight
+router.post('/', authenticateJWT, ensureLoggedIn, validateFlightNew, async (req, res, next) => {
+  try {
+    const flight = await Flight.create(req.body);
+    return res.status(201).json({ flight });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// GET Search flights with filters
+router.get('/', ensureLoggedIn, async (req, res, next) => {
+  try {
+    // Collect filters from query parameters
+    const filters = {
+      flightNumber : req.query.flightNumber,
+      tripId : req.query.tripId,
+      origin : req.query.origin,
+      destination : req.query.destination
+    };
+
+    const flights = await Flight.findAll(filters);
+    return res.json({ flights });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/**                           */
+/** AMADEUS FLIGHT ENDPOINTS */
+/**                         */
   
 // GET Flight Offers Search
 router.get("/offers", async function (req, res, next) {
   try {
-    console.log("flights.js: GET /flight/offers", req.query);
-
     const { originLocationCode, destinationLocationCode, departureDate, returnDate, adults } = req.query;
 
     // Prepare data for Amadeus flight search
@@ -60,7 +94,6 @@ router.get('/airport-suggestions', async (req, res, next) => {
       'page[offset]': 0,
       'page[limit]': 5
     });
-
     return res.json(response.data);
   } catch (error) {
     console.error("Error fetching airport suggestions:", error);
@@ -81,7 +114,7 @@ try {
 }
 });
 
-// Flight Date Search
+// GET Flight Date Search
 router.get("/dates", validateFlightSearch, async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightDates.get({
@@ -94,7 +127,6 @@ router.get("/dates", validateFlightSearch, async function (req, res, next) {
     return res.status(500).json({ error: error.message });
   }
 });
-
 
 // POST Flight Offers Search
 router.post("/offers", validateFlightSearch, async function (req, res, next) {
@@ -220,36 +252,6 @@ router.post("/availabilities", async function (req, res, next) {
   }
 });
 
-// POST Branded Fares Upsell
-router.post("/offers/upselling", async function (req, res, next) {
-  try {
-    const response = await amadeus.shopping.flightOffers.upselling.post(JSON.stringify(req.body));
-    return res.json(response.data);
-  } catch (error) {
-    console.error("Error fetching branded fares", error);
-    return res.status(500).json({ error: error.message });
-  }
-});
-
-// GET Flight Choice Prediction
-router.get("/offers/prediction", async function (req, res, next) {
-  try {
-    const response = await amadeus.shopping.flightOffersSearch.get({
-      originLocationCode: req.query.origin,
-      destinationLocationCode: req.query.destination,
-      departureDate: req.query.departureDate,
-      adults: req.query.adults
-    });
-    const predictionResponse = await amadeus.shopping.flightOffers.prediction.post(
-      JSON.stringify(response)
-    );
-    return res.json(predictionResponse.data);
-  } catch (error) {
-    console.error("Error fetching flight choice prediction", error);
-    return res.status(500).json({ error: error.message });
-  }
-});
-
 // GET Flight Checkin Links
 router.get("/airline/checkinLinks", async function (req, res, next) {
   try {
@@ -275,21 +277,6 @@ router.get("/status", async function (req, res, next) {
   } catch (error) {
     console.error("Error fetching flight status", error);
     return res.status(500).json({ error: error.message });
-  }
-});
-
-// GET Flight Busiest Traveling Period
-router.get("/busiestPeriod", async function (req, res, next) {
-  try {
-      const response = await amadeus.travel.analytics.airTraffic.busiestPeriod.get({
-          cityCode: req.query.cityCode,
-          period: req.query.period,
-          direction: amadeus.direction.arriving
-      });
-      return res.json(response.data);
-  } catch (error) {
-      console.error("Error fetching busiest traveling period", error);
-      return res.status(500).json({ error: error.message });
   }
 });
 
