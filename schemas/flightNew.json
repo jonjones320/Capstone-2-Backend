@@ -4,17 +4,7 @@
   "type": "object",
   "properties": {
     "tripId": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 50
-    },
-    "origin": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 50
-    },
-    "destination": {
-      "type": "string",
+      "type": "number",
       "minLength": 1,
       "maxLength": 50
     },
@@ -37,7 +27,7 @@
   "additionalProperties": false,
   "required": [
     "tripId",
-    "origin",
-    "destination"
+    "outboundFlightNumber",
+    "inboundFlightNumber"
   ]
 }
