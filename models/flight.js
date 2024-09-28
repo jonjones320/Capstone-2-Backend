@@ -85,24 +85,25 @@ class Flight {
     return flightsRes.rows;
   }
 
-  /** Given a flight number, return data about flight.
+  /** Given a flight id, return data about flight.
    *
-   * Returns { flightNumber, tripId, outboundFlightNumber, inboundFlightNumber }
+   * Returns { id, tripId, flightOfferId, outboundFlightNumber, inboundFlightNumber }
    *
    * Throws NotFoundError if not found.
    **/
-  static async get(flightNumber) {
+  static async get(id) {
     const flightRes = await db.query(
-              `SELECT flight_number AS "flightNumber",
+              `SELECT id,
                       trip_id AS "tripId",
+                      flight_offer_id AS "flightOfferId",
                       outboundFlightNumber,
                       inboundFlightNumber
                FROM flights
-               WHERE flight_number = $1`, [flightNumber]);
+               WHERE id = $1`, [id]);
 
     const flight = flightRes.rows[0];
 
-    if (!flight) throw new NotFoundError(`No flight: ${flightNumber}`);
+    if (!flight) throw new NotFoundError(`No flight information: ${id}`);
 
     return flight;
   }
@@ -117,7 +118,7 @@ class Flight {
    *
    * Throws NotFoundError if not found.
    */
-  static async update(flightNumber, data) {
+  static async update(id, data) {
     const { setCols, values } = sqlForPartialUpdate(
         data,
         {
@@ -128,15 +129,16 @@ class Flight {
 
     const querySql = `UPDATE flights 
                           SET ${setCols} 
-                          WHERE flight_number = ${idVarIdx} 
-                          RETURNING flight_number AS "flightNumber", 
+                          WHERE id = ${idVarIdx} 
+                          RETURNING id, 
                                     trip_id AS "tripId",
+                                    flight_offer_id AS "flightOfferId",
                                     outboundFlightNumber,
                                     inboundFlightNumber`;
-    const result = await db.query(querySql, [...values, flightNumber]);
+    const result = await db.query(querySql, [...values, id]);
     const flight = result.rows[0];
 
-    if (!flight) throw new NotFoundError(`No flight: ${flightNumber}`);
+    if (!flight) throw new NotFoundError(`No flight: ${id}`);
 
     return flight;
   }
@@ -145,15 +147,15 @@ class Flight {
    *
    * Throws NotFoundError if flight not found.
    **/
-  static async remove(flightNumber) {
+  static async remove(id) {
     const result = await db.query(
           `DELETE
            FROM flights
-           WHERE flight_number = $1
-           RETURNING flight_number`, [flightNumber]);
+           WHERE id = $1
+           RETURNING id`, [id]);
     const flight = result.rows[0];
 
-    if (!flight) throw new NotFoundError(`No flight: ${flightNumber}`);
+    if (!flight) throw new NotFoundError(`No flight: ${id}`);
   }
 }
 
