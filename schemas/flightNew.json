@@ -3,11 +3,6 @@
   "$id": "http://ranner.com/flightNew.schema.json",
   "type": "object",
   "properties": {
-    "flightNumber": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 15
-    },
     "tripId": {
       "type": "string",
       "minLength": 1,
@@ -22,11 +17,25 @@
       "type": "string",
       "minLength": 1,
       "maxLength": 50
+    },
+    "flightOfferId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "outboundFlightNumber": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 20
+    },
+    "inboundFlightNumber": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 20
     }
   },
   "additionalProperties": false,
   "required": [
-    "flightNumber",
     "tripId",
     "origin",
     "destination"

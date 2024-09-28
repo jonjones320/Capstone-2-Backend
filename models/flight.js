@@ -4,28 +4,30 @@ const db = require("../db");
 const { NotFoundError } = require("../expressError");
 const { sqlForPartialUpdate } = require("../helpers/sql");
 
-/** Related functions for flights. */
 
 class Flight {
   /** Create a flight (from data), update db, return new flight data.
    *
-   * data should be { flightNumber, tripId }
+   * data should be { tripId, flightOfferId, outboundFlightNumber, inboundFlightNumber }
    *
-   * Returns { flightNumber, tripId }
+   * Returns { id, ...flight }
    **/
   static async create(data) {
     const result = await db.query(
-              `INSERT INTO flights (flight_number,
-                                           trip_id,
-                                           origin,
-                                           destination)
-               VALUES ($1, $2, $3, $4)
-               RETURNING flight_number AS "flightNumber", trip_id AS "tripId", origin, destination`,
+      `INSERT INTO flights (trip_id,
+                            flight_offer_id,
+                            outbound_flight_number,
+                            inbound_flight_number)
+               VALUES ($1, $2, $3, $4, $5, $6)
+               RETURNING  trip_id AS "tripId", 
+                            flight_offer_id AS flightOfferId, 
+                            outbound_flight_num AS "outboundFlightNumber", 
+                            inbound_flight_number AS "inboundFlightNumber"`,
             [
-              data.flightNumber,
               data.tripId,
-              data.origin,
-              data.destination
+              data.flightOfferId,
+              data.outboundFlightNumber,
+              data.inboundFlightNumber
             ]);
     let flight = result.rows[0];
 

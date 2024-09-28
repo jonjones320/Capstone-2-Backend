@@ -25,10 +25,11 @@ CREATE TABLE trips (
 
 -- Flight Table
 CREATE TABLE flights (
-    flight_number VARCHAR(50) PRIMARY KEY NOT NULL, 
+    id SERIAL PRIMARY KEY, 
     trip_id INTEGER REFERENCES trips(trip_id) ON DELETE CASCADE,
-    origin VARCHAR(100) NOT NULL,
-    destination VARCHAR(100) NOT NULL
+    flight_offer_id INTEGER NOT NULL,
+    outbound_flight_number VARCHAR(10),
+    inbound_flight_number VARCHAR(10)
 );
 
 -- Accommodation Table

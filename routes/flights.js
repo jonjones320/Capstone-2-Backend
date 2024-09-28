@@ -35,8 +35,8 @@ router.get('/', ensureLoggedIn, async (req, res, next) => {
     const filters = {
       flightNumber : req.query.flightNumber,
       tripId : req.query.tripId,
-      origin : req.query.origin,
-      destination : req.query.destination
+      outboundFlightNumber : req.query.outboundFlightNumber,
+      inboundFlightNumber : req.query.inboundFlightNumber
     };
 
     const flights = await Flight.findAll(filters);

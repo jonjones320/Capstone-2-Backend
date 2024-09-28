@@ -23,10 +23,10 @@ VALUES ('New York Trip', 'testuser', 'NYC', 'RDU', '2025-01-01', '2025-01-10', 1
        ('San Francisco Trip', 'testadmin', 'SFO', 'JFK', '2025-03-01', '2025-03-07', 2);
 
 
-INSERT INTO flights (flight_number, trip_id, origin, destination)
-VALUES ('AA123', 1, 'JFK', 'LAX'),
-       ('AA124', 2, 'LAX', 'JFK'),
-       ('DL456', 3, 'LAX', 'SFO');
+INSERT INTO flights (trip_id, flight_offer_id, outbound_flight_number, inbound_flight_number )
+VALUES (1, 1, 'AA123', 'AA321' ),
+       (2, 2, 'AA789', 'AA987' ),
+       (3, 3, 'DL456', 'DL654');
 
 INSERT INTO accommodations (trip_id, name, check_in, check_out)
 VALUES (1, 'Hotel 1', '2025-01-01', '2025-01-10'),
