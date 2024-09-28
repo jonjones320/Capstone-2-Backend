@@ -37,50 +37,57 @@ class Flight {
   /** Find all flights (optional filter on searchFilters).
    *
    * searchFilters (all optional):
-   * - flightNumber
+   * - id
    * - tripId
-   * - origin
-   * - destination
+   * - flightOfferId
+   * - outboundFlightNumber
+   * - inboundFlightNumber
    *
-   * Returns [{ flightNumber, tripId, origin, destination }, ...]
+   * Returns [{ id, tripId, flightOfferId, outboundFlightNumber, inboundFlightNumber }, ...]
    * */
-  static async findAll({ flightNumber, tripId, origin, destination } = {}) {
-    let query = `SELECT flight_number AS "flightNumber",
+  static async findAll({ id, tripId, flightOfferId, outboundFlightNumber, inboundFlightNumber } = {}) {
+    let query = `SELECT id,
                         trip_id AS "tripId",
-                        origin,
-                        destination
+                        flight_offer_id AS flightOfferId,
+                        outbound_flight_number AS outboundFlightNumber,
+                        inbound_flight_number AS inboundFlightNumber
                  FROM flights`;
     let whereExpressions = [];
     let queryValues = [];
 
+    if (id !== undefined) {
+        queryValues.push(id);
+        whereExpressions.push(`id = $${queryValues.length}`);
+    };
     if (tripId !== undefined) {
       queryValues.push(tripId);
       whereExpressions.push(`trip_id = $${queryValues.length}`);
     };
-    if (flightNumber !== undefined) {
-        queryValues.push(flightNumber);
-        whereExpressions.push(`flight_number = $${queryValues.length}`);
+    if (flightOfferId !== undefined) {
+      queryValues.push(flightOrfferId);
+      whereExpressions.push(`flightOrderId = $${queryValues.length}`)
+    }
+    if (outboundFlightNumber !== undefined) {
+      queryValues.push(outboundFlightNumber);
+      whereExpressions.push(`outboundFlightNumber = $${queryValues.length}`);
     };
-    if (origin !== undefined) {
-      queryValues.push(origin);
-      whereExpressions.push(`origin = $${queryValues.length}`);
+    if (inboundFlightNumber !== undefined) {
+      queryValues.push(inboundFlightNumber);
+      whereExpressions.push(`inboundFlightNumber = $${queryValues.length}`);
     };
-    if (destination !== undefined) {
-      queryValues.push(destination);
-      whereExpressions.push(`destination = $${queryValues.length}`);
-    };
+
     if (whereExpressions.length > 0) {
       query += " WHERE " + whereExpressions.join(" AND ");
     };
 
-    query += " ORDER BY flight_number";
+    query += " ORDER BY id";
     const flightsRes = await db.query(query, queryValues);
     return flightsRes.rows;
   }
 
   /** Given a flight number, return data about flight.
    *
-   * Returns { flightNumber, tripId, origin, destination }
+   * Returns { flightNumber, tripId, outboundFlightNumber, inboundFlightNumber }
    *
    * Throws NotFoundError if not found.
    **/
@@ -88,8 +95,8 @@ class Flight {
     const flightRes = await db.query(
               `SELECT flight_number AS "flightNumber",
                       trip_id AS "tripId",
-                      origin,
-                      destination
+                      outboundFlightNumber,
+                      inboundFlightNumber
                FROM flights
                WHERE flight_number = $1`, [flightNumber]);
 
@@ -104,9 +111,9 @@ class Flight {
    *
    * This is a "partial update" --- only changes provided fields.
    *
-   * Data can include: { tripId, origin, destination }
+   * Data can include: { tripId, outboundFlightNumber, inboundFlightNumber }
    *
-   * Returns { flightNumber, tripId, origin, destination }
+   * Returns { flightNumber, tripId, outboundFlightNumber, inboundFlightNumber }
    *
    * Throws NotFoundError if not found.
    */
@@ -114,8 +121,8 @@ class Flight {
     const { setCols, values } = sqlForPartialUpdate(
         data,
         {
-          origin: "origin",
-          destination: "destination"
+          outboundFlightNumber: "outboundFlightNumber",
+          inboundFlightNumber: "inboundFlightNumber"
         });
     const idVarIdx = "$" + (values.length + 1);
 
@@ -124,8 +131,8 @@ class Flight {
                           WHERE flight_number = ${idVarIdx} 
                           RETURNING flight_number AS "flightNumber", 
                                     trip_id AS "tripId",
-                                    origin,
-                                    destination`;
+                                    outboundFlightNumber,
+                                    inboundFlightNumber`;
     const result = await db.query(querySql, [...values, flightNumber]);
     const flight = result.rows[0];
 
