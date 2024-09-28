@@ -18,10 +18,10 @@ class Flight {
                             flight_offer_id,
                             outbound_flight_number,
                             inbound_flight_number)
-               VALUES ($1, $2, $3, $4, $5, $6)
+               VALUES ($1, $2, $3, $4)
                RETURNING  trip_id AS "tripId", 
                             flight_offer_id AS flightOfferId, 
-                            outbound_flight_num AS "outboundFlightNumber", 
+                            outbound_flight_number AS "outboundFlightNumber", 
                             inbound_flight_number AS "inboundFlightNumber"`,
             [
               data.tripId,
