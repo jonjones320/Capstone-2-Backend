@@ -3,13 +3,9 @@
 /** Convenience middleware to handle common auth cases in routes. */
 
 const jwt = require("jsonwebtoken");
-const Ajv = require("ajv");
 const { SECRET_KEY } = require("../config");
 const { UnauthorizedError } = require("../expressError");
 const addFormats = require("ajv-formats");
-
-const ajv = new Ajv();
-addFormats(ajv); 
 
 
 
