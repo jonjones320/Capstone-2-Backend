@@ -25,11 +25,10 @@ CREATE TABLE trips (
 
 -- Flight Table
 CREATE TABLE flights (
-    id SERIAL PRIMARY KEY, 
+    id SERIAL PRIMARY KEY,
     trip_id INTEGER REFERENCES trips(trip_id) ON DELETE CASCADE,
-    flight_offer_id INTEGER NOT NULL,
-    outbound_flight_number VARCHAR(10),
-    inbound_flight_number VARCHAR(10)
+    amadeus_order_id VARCHAR(255) NOT NULL,
+    flight_details JSONB
 );
 
 -- Accommodation Table
