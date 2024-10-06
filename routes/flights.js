@@ -41,6 +41,17 @@ router.get('/', ensureLoggedIn, async (req, res, next) => {
     };
 
     const flights = await Flight.findAll(filters);
+    return res.json({ flight : flights[0] });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+// GET Flights associated with a Trip Id
+router.get('/trip/:tripId', async function (req, res, next) {
+  try {
+    console.log("flights.js - get flights/trip/:tripId - TRIPID: ", req.params.tripId);
+    const flights = await Flight.getFlightsByTrip(req.params.tripId)
     return res.json({ flights });
   } catch (err) {
     return next(err);
@@ -68,6 +79,7 @@ router.get("/offers", async function (req, res, next) {
     const response = await amadeus.shopping.flightOffersSearch.get(flightSearchParams);
 
     if (response.result) {
+      console.log("flights.js - /offers - RESPONSE.RESULT", res.json(response.result));
       return res.json(response.result);
     } else {
       throw new BadRequestError("No flights found");
