@@ -46,6 +46,7 @@ class Flight {
    * Returns [{ id, tripId, flightOfferId, outboundFlightNumber, inboundFlightNumber }, ...]
    * */
   static async findAll({ id, tripId, flightOfferId, outboundFlightNumber, inboundFlightNumber } = {}) {
+    console.log("flight.js - findAll - ID, TRIPID: ", id, tripId);
     let query = `SELECT id,
                         trip_id AS "tripId",
                         flight_offer_id AS flightOfferId,
@@ -64,16 +65,16 @@ class Flight {
       whereExpressions.push(`trip_id = $${queryValues.length}`);
     };
     if (flightOfferId !== undefined) {
-      queryValues.push(flightOrfferId);
-      whereExpressions.push(`flightOrderId = $${queryValues.length}`)
+      queryValues.push(flightOfferId);
+      whereExpressions.push(`flight_offer_id = $${queryValues.length}`)
     }
     if (outboundFlightNumber !== undefined) {
       queryValues.push(outboundFlightNumber);
-      whereExpressions.push(`outboundFlightNumber = $${queryValues.length}`);
+      whereExpressions.push(`outbound_flight_number = $${queryValues.length}`);
     };
     if (inboundFlightNumber !== undefined) {
       queryValues.push(inboundFlightNumber);
-      whereExpressions.push(`inboundFlightNumber = $${queryValues.length}`);
+      whereExpressions.push(`inbound_flight_number = $${queryValues.length}`);
     };
 
     if (whereExpressions.length > 0) {
@@ -85,25 +86,27 @@ class Flight {
     return flightsRes.rows;
   }
 
-  /** Given a flight id, return data about flight.
+  /** Given a trip id, return data about that trip's flights.
    *
    * Returns { id, tripId, flightOfferId, outboundFlightNumber, inboundFlightNumber }
    *
    * Throws NotFoundError if not found.
    **/
-  static async get(id) {
+  static async getFlightsByTrip(tripId) {
+    console.log("flight.js - getFlightsByTrip - TRIPID: ", tripId);
     const flightRes = await db.query(
               `SELECT id,
                       trip_id AS "tripId",
                       flight_offer_id AS "flightOfferId",
-                      outboundFlightNumber,
-                      inboundFlightNumber
+                      outbound_flight_number AS "outboundFlightNumber",
+                      inbound_flight_number AS "inboundFlightNumber"
                FROM flights
-               WHERE id = $1`, [id]);
+               WHERE trip_id = $1`, [tripId]);
 
     const flight = flightRes.rows[0];
+    console.log("flight.js - getFlightsByTrip - FLIGHT: ", flight);
 
-    if (!flight) throw new NotFoundError(`No flight information: ${id}`);
+    if (!flight) throw new NotFoundError(`No flight information: ${tripId}`);
 
     return flight;
   }
@@ -122,8 +125,8 @@ class Flight {
     const { setCols, values } = sqlForPartialUpdate(
         data,
         {
-          outboundFlightNumber: "outboundFlightNumber",
-          inboundFlightNumber: "inboundFlightNumber"
+          outboundFlightNumber: "outbound_flight_number",
+          inboundFlightNumber: "inbound_flight_number"
         });
     const idVarIdx = "$" + (values.length + 1);
 
@@ -133,8 +136,8 @@ class Flight {
                           RETURNING id, 
                                     trip_id AS "tripId",
                                     flight_offer_id AS "flightOfferId",
-                                    outboundFlightNumber,
-                                    inboundFlightNumber`;
+                                    outbound_flight_number AS "outboundFlightNumber",
+                                    inbound_flight_number AS "inboundFlightNumber"`;
     const result = await db.query(querySql, [...values, id]);
     const flight = result.rows[0];
 
