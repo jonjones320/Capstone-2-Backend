@@ -12,26 +12,21 @@ class Flight {
    *
    * Returns { id, ...flight }
    **/
-  static async create(data) {
+  static async create({ tripId, amadeusOrderId, flightDetails }) {
+    console.log("flight.js - Flight.create - tripId, AMADEUSORDERID, FLIGHTDETAILS: ", tripId, amadeusOrderId, flightDetails );
     const result = await db.query(
-      `INSERT INTO flights (trip_id,
-                            flight_offer_id,
-                            outbound_flight_number,
-                            inbound_flight_number)
-               VALUES ($1, $2, $3, $4)
-               RETURNING  trip_id AS "tripId", 
-                            flight_offer_id AS flightOfferId, 
-                            outbound_flight_number AS "outboundFlightNumber", 
-                            inbound_flight_number AS "inboundFlightNumber"`,
-            [
-              data.tripId,
-              data.flightOfferId,
-              data.outboundFlightNumber,
-              data.inboundFlightNumber
-            ]);
-    let flight = result.rows[0];
-
-    return flight;
+      `INSERT INTO flights (trip_id, 
+                            amadeus_order_id, 
+                            flight_details)
+       VALUES ($1, $2, $3)
+       RETURNING id, 
+                trip_id AS "tripId", 
+                amadeus_order_id AS "amadeusOrderId", 
+                flight_details AS "flightDetails"`,
+      [tripId, amadeusOrderId, flightDetails]
+    );
+    console.log("flight.js - Flight.create - RESULT.ROWS[0]: ", result.rows[0]);
+    return result.rows[0];
   }
 
   /** Find all flights (optional filter on searchFilters).
@@ -93,22 +88,16 @@ class Flight {
    * Throws NotFoundError if not found.
    **/
   static async getFlightsByTrip(tripId) {
-    console.log("flight.js - getFlightsByTrip - TRIPID: ", tripId);
-    const flightRes = await db.query(
-              `SELECT id,
-                      trip_id AS "tripId",
-                      flight_offer_id AS "flightOfferId",
-                      outbound_flight_number AS "outboundFlightNumber",
-                      inbound_flight_number AS "inboundFlightNumber"
-               FROM flights
-               WHERE trip_id = $1`, [tripId]);
-
-    const flight = flightRes.rows[0];
-    console.log("flight.js - getFlightsByTrip - FLIGHT: ", flight);
-
-    if (!flight) throw new NotFoundError(`No flight information: ${tripId}`);
-
-    return flight;
+    const result = await db.query(
+      `SELECT id, 
+              trip_id AS "tripId", 
+              amadeus_order_id AS "amadeusOrderId", 
+              flight_details AS "flightDetails"
+       FROM flights
+       WHERE trip_id = $1`,
+      [tripId]
+    );
+    return result.rows;
   }
 
   /** Update flight data with `data`.
