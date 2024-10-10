@@ -13,7 +13,6 @@ class Flight {
    * Returns { id, ...flight }
    **/
   static async create({ tripId, amadeusOrderId, flightDetails }) {
-    console.log("flight.js - Flight.create - tripId, AMADEUSORDERID, FLIGHTDETAILS: ", tripId, amadeusOrderId, flightDetails );
     const result = await db.query(
       `INSERT INTO flights (trip_id, 
                             amadeus_order_id, 
@@ -25,7 +24,6 @@ class Flight {
                 flight_details AS "flightDetails"`,
       [tripId, amadeusOrderId, flightDetails]
     );
-    console.log("flight.js - Flight.create - RESULT.ROWS[0]: ", result.rows[0]);
     return result.rows[0];
   }
 
@@ -40,43 +38,33 @@ class Flight {
    *
    * Returns [{ id, tripId, flightOfferId, outboundFlightNumber, inboundFlightNumber }, ...]
    * */
-  static async findAll({ id, tripId, flightOfferId, outboundFlightNumber, inboundFlightNumber } = {}) {
-    console.log("flight.js - findAll - ID, TRIPID: ", id, tripId);
+  static async findAll({ id, tripId, amadeusOrderId } = {}) {
     let query = `SELECT id,
                         trip_id AS "tripId",
-                        flight_offer_id AS flightOfferId,
-                        outbound_flight_number AS outboundFlightNumber,
-                        inbound_flight_number AS inboundFlightNumber
+                        amadeus_order_id AS "amadeusOrderId",
+                        flight_details AS "flightDetails"
                  FROM flights`;
     let whereExpressions = [];
     let queryValues = [];
-
+  
     if (id !== undefined) {
-        queryValues.push(id);
-        whereExpressions.push(`id = $${queryValues.length}`);
-    };
+      queryValues.push(id);
+      whereExpressions.push(`id = $${queryValues.length}`);
+    }
     if (tripId !== undefined) {
       queryValues.push(tripId);
       whereExpressions.push(`trip_id = $${queryValues.length}`);
-    };
-    if (flightOfferId !== undefined) {
-      queryValues.push(flightOfferId);
-      whereExpressions.push(`flight_offer_id = $${queryValues.length}`)
     }
-    if (outboundFlightNumber !== undefined) {
-      queryValues.push(outboundFlightNumber);
-      whereExpressions.push(`outbound_flight_number = $${queryValues.length}`);
-    };
-    if (inboundFlightNumber !== undefined) {
-      queryValues.push(inboundFlightNumber);
-      whereExpressions.push(`inbound_flight_number = $${queryValues.length}`);
-    };
-
+    if (amadeusOrderId !== undefined) {
+      queryValues.push(amadeusOrderId);
+      whereExpressions.push(`amadeus_order_id = $${queryValues.length}`);
+    }
+  
     if (whereExpressions.length > 0) {
       query += " WHERE " + whereExpressions.join(" AND ");
-    };
-
+    }
     query += " ORDER BY id";
+  
     const flightsRes = await db.query(query, queryValues);
     return flightsRes.rows;
   }
