@@ -31,12 +31,10 @@ router.post('/', authenticateJWT, ensureLoggedIn, validateFlightNew, async (req,
 // GET Search flights with filters
 router.get('/', ensureLoggedIn, async (req, res, next) => {
   try {
+    console.log("flight.js - filters: ", req.query);
     const filters = {
       id : req.query.id,
-      tripId : req.query.tripId,
-      flightOfferId: req.query.flightOfferId,
-      outboundFlightNumber : req.query.outboundFlightNumber,
-      inboundFlightNumber : req.query.inboundFlightNumber
+      tripId : req.query.tripId
     };
     
     let flights;
