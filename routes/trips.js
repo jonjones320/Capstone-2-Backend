@@ -40,7 +40,7 @@ router.post('/', authenticateJWT, ensureLoggedIn, validateTripNew, async (req, r
 });
 
 // PATCH /trips/:id: update a trip
-router.patch('/:id', ensureCorrectUserOrAdmin, validateTripUpdate, async (req, res, next) => {
+router.patch('/:id', authenticateJWT, ensureCorrectUserOrAdmin, validateTripUpdate, async (req, res, next) => {
   try {
     const { startDate, endDate } = req.body;
 
@@ -56,7 +56,7 @@ router.patch('/:id', ensureCorrectUserOrAdmin, validateTripUpdate, async (req, r
 });
 
 // GET /trips: get all trips (with optional filtering)  
-router.get('/', ensureLoggedIn, async (req, res, next) => {
+router.get('/', authenticateJWT, ensureLoggedIn, async (req, res, next) => {
   try {
     // Collect filters from query parameters
     const filters = {
@@ -77,7 +77,7 @@ router.get('/', ensureLoggedIn, async (req, res, next) => {
 });
 
 // GET /trips/user/:username: get all trips for a user
-router.get('/user/:username', ensureCorrectUserOrAdmin, async (req, res, next) => {
+router.get('/user/:username', authenticateJWT, ensureLoggedIn, async (req, res, next) => {
   try {
     const trips = await Trip.findAll({ username: req.params.username });
     return res.json({ trips });
@@ -87,7 +87,7 @@ router.get('/user/:username', ensureCorrectUserOrAdmin, async (req, res, next) =
 });
 
 // GET /trips/:id: get a single trip by id
-router.get('/:id', ensureCorrectUserOrAdmin, async (req, res, next) => {
+router.get('/:id', authenticateJWT, ensureLoggedIn, async (req, res, next) => {
   try {
     const trip = await Trip.get(req.params.id);
     return res.json({ trip });
@@ -98,7 +98,7 @@ router.get('/:id', ensureCorrectUserOrAdmin, async (req, res, next) => {
 });   
 
 // DELETE /trips/:id: delete a single trip by id
-router.delete('/:id', ensureCorrectUserOrAdmin, async (req, res, next) => {
+router.delete('/:id', authenticateJWT, ensureCorrectUserOrAdmin, async (req, res, next) => {
   try {
     await Trip.remove(req.params.id);
     return res.json({ message: 'Deleted' });
