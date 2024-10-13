@@ -25,7 +25,7 @@
             "type": "object",
             "properties": {
               "reference": { "type": "string" },
-              "creationDate": { "type": "string", "format": "date-time" },
+              "creationDate": { "type": "string" },
               "originSystemCode": { "type": "string" },
               "flightOfferId": { "type": "string" }
             },
@@ -43,7 +43,7 @@
               "instantTicketingRequired": { "type": "boolean" },
               "nonHomogeneous": { "type": "boolean" },
               "oneWay": { "type": "boolean" },
-              "lastTicketingDate": { "type": "string", "format": "date" },
+              "lastTicketingDate": { "type": "string" },
               "numberOfBookableSeats": { "type": "integer" },
               "itineraries": {
                 "type": "array",
@@ -61,7 +61,7 @@
                             "properties": {
                               "iataCode": { "type": "string" },
                               "terminal": { "type": "string" },
-                              "at": { "type": "string", "format": "date-time" }
+                              "at": { "type": "string" }
                             },
                             "required": ["iataCode", "at"]
                           },
@@ -70,7 +70,7 @@
                             "properties": {
                               "iataCode": { "type": "string" },
                               "terminal": { "type": "string" },
-                              "at": { "type": "string", "format": "date-time" }
+                              "at": { "type": "string" }
                             },
                             "required": ["iataCode", "at"]
                           },
@@ -179,7 +179,7 @@
           }
         }
       },
-      "required": ["type", "id", "queuingOfficeId", "associatedRecords", "flightOffers"]
+      "required": ["type", "id", "associatedRecords", "flightOffers"]
     }
   },
   "required": ["tripId", "flightDetails"]
