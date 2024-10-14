@@ -8,7 +8,7 @@ const amadeus = require("../amadeus"); // Access the Amadeus SDK
 const Trip = require('../models/trip');
 
 const { ensureCorrectUserOrAdmin, 
-        ensureAdmin, 
+        ensureCorrectTripOwnerOrAdmin,
         ensureLoggedIn, 
         authenticateJWT 
       } = require("../middleware/auth");
@@ -40,7 +40,7 @@ router.post('/', authenticateJWT, ensureLoggedIn, validateTripNew, async (req, r
 });
 
 // PATCH /trips/:id: update a trip
-router.patch('/:id', authenticateJWT, ensureCorrectUserOrAdmin, validateTripUpdate, async (req, res, next) => {
+router.patch('/:id', authenticateJWT, ensureCorrectTripOwnerOrAdmin, validateTripUpdate, async (req, res, next) => {
   try {
     const { startDate, endDate } = req.body;
 

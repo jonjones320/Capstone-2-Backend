@@ -3,6 +3,7 @@
 /** Convenience middleware to handle common auth cases in routes. */
 
 const jwt = require("jsonwebtoken");
+const Trip = require("../models/trip");
 const { SECRET_KEY } = require("../config");
 const { UnauthorizedError } = require("../expressError");
 
@@ -21,9 +22,8 @@ function authenticateJWT(req, res, next) {
     const authHeader = req.headers && req.headers.authorization;
     if (authHeader) {
       const token = authHeader.replace(/^[Bb]earer /, "").trim();
-      const user = jwt.verify(token, SECRET_KEY);
+      res.locals.user = jwt.verify(token, SECRET_KEY);
 
-      res.locals.user = user;
     } else {
       console.debug("auth.js - authenticateJWT - NO AUTH HEADER", req.headers);
     }
@@ -73,8 +73,6 @@ function ensureAdmin(req, res, next) {
 
 function ensureCorrectUserOrAdmin(req, res, next) {
   try {
-    console.log("auth.js - ensureCorrectUserOrAdmin - RES: ", res);
-    console.log("auth.js - ensureCorrectUserOrAdmin - REQ: ", req);
     const user = res.locals.user;
     if (!(user && (user.isAdmin || user.username === req.params.username))) {
       throw new UnauthorizedError();
@@ -83,6 +81,24 @@ function ensureCorrectUserOrAdmin(req, res, next) {
   } catch (err) {
     return next(err);
   }
+};
+
+async function ensureCorrectTripOwnerOrAdmin(req, res, next) {
+  try {
+    const user = res.locals.user;
+    if (!(user && (user.isAdmin || await isTripOwner(user.username, req.params.id)))) {
+      throw new UnauthorizedError();
+    }
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+};
+
+// Helper function to check if a user owns a trip
+async function isTripOwner(username, tripId) {
+  const trip = await Trip.get(tripId);
+  return trip && trip.username === username;
 }
 
 
@@ -91,4 +107,5 @@ module.exports = {
   ensureLoggedIn,
   ensureAdmin,
   ensureCorrectUserOrAdmin,
+  ensureCorrectTripOwnerOrAdmin
 };
