@@ -19,10 +19,9 @@ const morgan = require("morgan");
 const app = express();
 
 app.use(cors({
-  origin: 'https://capstone-2-frontend-zk5k.onrender.com',
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
   credentials: true
 }));
-// app.use(cors());
 app.use(express.json());
 app.use(morgan("tiny"));
 app.use(authenticateJWT);
