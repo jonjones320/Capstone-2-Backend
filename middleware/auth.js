@@ -73,6 +73,8 @@ function ensureAdmin(req, res, next) {
 
 function ensureCorrectUserOrAdmin(req, res, next) {
   try {
+    console.log("auth.js - ensureCorrectUserOrAdmin - RES: ", res);
+    console.log("auth.js - ensureCorrectUserOrAdmin - REQ: ", req);
     const user = res.locals.user;
     if (!(user && (user.isAdmin || user.username === req.params.username))) {
       throw new UnauthorizedError();
