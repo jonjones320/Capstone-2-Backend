@@ -44,7 +44,7 @@ router.get('/', ensureLoggedIn, async (req, res, next) => {
       console.error("Error in Flight.findAll:", findError);
       throw findError;
     }
-    
+    console.log("flight.js - flights: ", flights);
     return res.json({ flight : flights[0] });
   } catch (err) {
     console.error("Error in flight route handler:", err);
