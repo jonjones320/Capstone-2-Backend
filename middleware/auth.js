@@ -16,7 +16,6 @@ const { UnauthorizedError } = require("../expressError");
  *
  * It's not an error if no token was provided or if the token is not valid.
  */
-
 function authenticateJWT(req, res, next) {
   try {
     const authHeader = req.headers && req.headers.authorization;
@@ -38,7 +37,6 @@ function authenticateJWT(req, res, next) {
  *
  * If not, raises Unauthorized.
  */
-
 function ensureLoggedIn(req, res, next) {
   try {
     if (!res.locals.user) throw new UnauthorizedError();
@@ -53,7 +51,6 @@ function ensureLoggedIn(req, res, next) {
  *
  *  If not, raises Unauthorized.
  */
-
 function ensureAdmin(req, res, next) {
   try {
     if (!res.locals.user || !res.locals.user.isAdmin) {
@@ -65,12 +62,11 @@ function ensureAdmin(req, res, next) {
   }
 }
 
-/** Middleware to use when they must provide a valid token & be user matching
- *  username provided as route param.
+/** Middleware to use when request must provide a valid token & be user matching
+ *  username provided as route param. Or be an administrator.
  *
  *  If not, raises Unauthorized.
  */
-
 function ensureCorrectUserOrAdmin(req, res, next) {
   try {
     const user = res.locals.user;
@@ -83,6 +79,11 @@ function ensureCorrectUserOrAdmin(req, res, next) {
   }
 };
 
+/** Middleware to use when request must provide a valid token & be user matching
+ *  user in relation to the Trip id.
+ * 
+ *  If not, raises Unauthorized.
+ */
 async function ensureCorrectTripOwnerOrAdmin(req, res, next) {
   try {
     const user = res.locals.user;
@@ -95,7 +96,10 @@ async function ensureCorrectTripOwnerOrAdmin(req, res, next) {
   }
 };
 
-// Helper function to check if a user owns a trip
+/** Helper function to check if a user owns a trip using
+ *  database relation between Trip (by id) and username.
+ * 
+ */ 
 async function isTripOwner(username, tripId) {
   const trip = await Trip.get(tripId);
   return trip && trip.username === username;
