@@ -40,12 +40,17 @@ router.get('/', ensureLoggedIn, async (req, res, next) => {
     let flights;
     try {
       flights = await Flight.findAll(filters);
+      console.log("flight.js - flights: ", flights);
+      
+      if (flights.length === 0) {
+        return res.status(404).json({ error: "No flight found with the given ID" });
+      }
+      
+      return res.json({ flight: flights[0] });
     } catch (findError) {
       console.error("Error in Flight.findAll:", findError);
       throw findError;
     }
-    console.log("flight.js - flights: ", flights);
-    return res.json({ flight : flights[0] });
   } catch (err) {
     console.error("Error in flight route handler:", err);
     return next(err);
