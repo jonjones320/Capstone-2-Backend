@@ -98,7 +98,7 @@ router.get('/:id', authenticateJWT, ensureLoggedIn, async (req, res, next) => {
 });   
 
 // DELETE /trips/:id: delete a single trip by id
-router.delete('/:id', authenticateJWT, ensureCorrectUserOrAdmin, async (req, res, next) => {
+router.delete('/:id', authenticateJWT, ensureCorrectTripOwnerOrAdmin, async (req, res, next) => {
   try {
     await Trip.remove(req.params.id);
     return res.json({ message: 'Deleted' });
