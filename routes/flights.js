@@ -15,6 +15,7 @@ const { validateFlightNew,
         validateFlightUpdate, 
         validateFlightSearch 
       } = require('../middleware/validateSchema');
+const formatDate = require("../helpers/date");
 const Flight = require("../models/flight")
 
 
@@ -70,19 +71,25 @@ router.get('/trip/:tripId', async function (req, res, next) {
 /**                           */
 /** AMADEUS FLIGHT ENDPOINTS */
 /**                         */
-  
+
 // GET Flight Offers Search
 router.get("/offers", async function (req, res, next) {
   try {
-    const { originLocationCode, destinationLocationCode, departureDate, returnDate, adults } = req.query;
+    const { 
+      originLocationCode, 
+      destinationLocationCode, 
+      departureDate, 
+      returnDate, 
+      adults 
+    } = req.query;
 
     // Prepare data for Amadeus flight search
     const flightSearchParams = {
       originLocationCode,
       destinationLocationCode,
-      departureDate,
-      returnDate,
-      adults,
+      departureDate: formatDate(departureDate),
+      returnDate: returnDate ? formatDate(returnDate) : undefined,
+      adults: parseInt(adults, 10),
     };
 
     const response = await amadeus.shopping.flightOffersSearch.get(flightSearchParams);
