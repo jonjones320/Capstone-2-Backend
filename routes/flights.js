@@ -68,6 +68,16 @@ router.get('/trip/:tripId', async function (req, res, next) {
   }
 });
 
+// DELETE /flights/:id: delete a single flight by id
+router.delete('/:id', authenticateJWT, ensureCorrectUserOrAdmin, async (req, res, next) => {
+  try {
+    await Flight.remove(req.params.id);
+    return res.json({ message: 'Deleted' });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 /**                           */
 /** AMADEUS FLIGHT ENDPOINTS */
 /**                         */
