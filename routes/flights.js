@@ -100,6 +100,7 @@ router.get("/offers", async function (req, res, next) {
       departureDate: formatDate(departureDate),
       returnDate: returnDate ? formatDate(returnDate) : undefined,
       adults: parseInt(adults, 10),
+      currencyCode: currencyCode || 'USD' // Use USD as default if not provided
     };
 
     const response = await amadeus.shopping.flightOffersSearch.get(flightSearchParams);
@@ -130,7 +131,8 @@ router.get('/airport-suggestions', async (req, res, next) => {
       keyword: keyword,
       subType: 'AIRPORT,CITY',
       'page[offset]': 0,
-      'page[limit]': 5
+      'page[limit]': 5,
+      currencyCode: currencyCode || 'USD' // Use USD as default if not provided
     });
     return res.json(response.data);
   } catch (error) {
@@ -184,7 +186,8 @@ router.get("/offers/price", async function (req, res, next) {
       originLocationCode: req.query.origin,
       destinationLocationCode: req.query.destination,
       departureDate: req.query.departureDate,
-      adults: req.query.adults
+      adults: req.query.adults,
+      currencyCode: currencyCode || 'USD' // Use USD as default if not provided
     });
     const pricingResponse = await amadeus.shopping.flightOffers.pricing.post(
       JSON.stringify({
