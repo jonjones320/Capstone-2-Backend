@@ -90,17 +90,18 @@ router.get("/offers", async function (req, res, next) {
       destinationLocationCode, 
       departureDate, 
       returnDate, 
-      adults 
+      adults,
+      currencyCode
     } = req.query;
 
     // Prepare data for Amadeus flight search
     const flightSearchParams = {
       originLocationCode,
       destinationLocationCode,
-      departureDate: formatDate(departureDate),
-      returnDate: returnDate ? formatDate(returnDate) : undefined,
-      adults: parseInt(adults, 10),
-      currencyCode: currencyCode || 'USD' // Use USD as default if not provided
+      departureDate,
+      returnDate,
+      adults,
+      currencyCodes: currencyCode ? [currencyCode] : ['USD']
     };
 
     const response = await amadeus.shopping.flightOffersSearch.get(flightSearchParams);
