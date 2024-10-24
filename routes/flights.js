@@ -130,8 +130,7 @@ router.get('/airport-suggestions', async (req, res, next) => {
       keyword: keyword,
       subType: 'AIRPORT,CITY',
       'page[offset]': 0,
-      'page[limit]': 5,
-      currencyCode: currencyCode || 'USD' // Use USD as default if not provided
+      'page[limit]': 5
     });
     return res.json(response.data);
   } catch (error) {
