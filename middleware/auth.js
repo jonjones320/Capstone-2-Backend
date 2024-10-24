@@ -69,10 +69,12 @@ function ensureAdmin(req, res, next) {
  */
 function ensureCorrectUserOrAdmin(req, res, next) {
   try {
+    // User from local storage.
     const user = res.locals.user;
-    console.log("AUTH.JS - ENSURECORRECTUSERORADMIN - user: ", user);
-    console.log("AUTH.JS - ENSURECORRECTUSERORADMIN - req.body.username: ", req.body.username);
-    if (!(user && (user.isAdmin || user.username === req.body.username))) {
+    // Username from the request that is being validated.
+    const requestUsername = req.params.username || req.query.username;
+
+    if (!(user && (user.isAdmin || user.username === requestUsername))) {
       throw new UnauthorizedError();
     }
     return next();
