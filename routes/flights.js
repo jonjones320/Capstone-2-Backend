@@ -166,7 +166,8 @@ router.get("/dates", validateFlightSearch, async function (req, res, next) {
   }
 });
 
-// POST Flight Offers Search
+// POST Flight Offers Search //
+// Creates an Amadeus order for a flight.
 router.post("/offers", validateFlightSearch, async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightOffersSearch.post(JSON.stringify(req.body));
@@ -177,7 +178,9 @@ router.post("/offers", validateFlightSearch, async function (req, res, next) {
   }
 });
 
-// GET Flight Offers Price
+// GET Flight Offers Price //
+// Used to verify that the price hasn't changed since the order was created.
+// This verification is required before booking a flight.
 router.get("/offers/price", async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightOffersSearch.get({
@@ -213,7 +216,8 @@ router.post("/offers/price", async function (req, res, next) {
   }
 });
 
-// POST Flight Create Orders
+// POST Flight Create Orders //
+// Books a flight with Amadeus
 router.post("/orders", async function (req, res, next) {
   try {
     const response = await amadeus.booking.flightOrders.post(JSON.stringify(req.body));
@@ -300,21 +304,6 @@ router.get("/airline/checkinLinks", async function (req, res, next) {
     return res.json(response.data);
   } catch (error) {
     console.error("Error fetching check-in links", error);
-    return res.status(500).json({ error: error.message });
-  }
-});
-
-// GET On-Demand Flight Status
-router.get("/status", async function (req, res, next) {
-  try {
-    const response = await amadeus.schedule.flights.get({
-      carrierCode: req.query.carrierCode,
-      flightNumber: req.query.flightNumber,
-      scheduledDepartureDate: req.query.scheduledDepartureDate
-    });
-    return res.json(response.data);
-  } catch (error) {
-    console.error("Error fetching flight status", error);
     return res.status(500).json({ error: error.message });
   }
 });
