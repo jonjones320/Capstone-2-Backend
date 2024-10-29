@@ -33,6 +33,11 @@ app.use("/flights", flightsRoutes);
 app.use("/airlines", airlinesRoutes);
 
 
+//** Recieves and responds to health checks  */
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "healthy" });
+});
+
 /** Handle 404 errors -- this matches everything */
 app.use(function (req, res, next) {
   return next(new NotFoundError());
