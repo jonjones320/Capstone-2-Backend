@@ -66,10 +66,6 @@ function ensureAdmin(req, res, next) {
  */
 function ensureCorrectUserOrAdmin(req, res, next) {
   try {
-    console.log("AUTH.JS - res.locals.user: ", res.locals.user);
-    console.log("AUTH.JS - req.params.username: ", req.params.username);
-    console.log("AUTH.JS - req.body.username: ", req.body.username);
-    console.log("AUTH.JS - req.query.username: ", req.query.username);
     // User from local storage.
     const user = res.locals.user;
     // Username from the request that is being validated.
