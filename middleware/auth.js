@@ -72,7 +72,7 @@ function ensureCorrectUserOrAdmin(req, res, next) {
     // User from local storage.
     const user = res.locals.user;
     // Username from the request that is being validated.
-    const requestUsername = req.params.username || req.query.username;
+    const requestUsername = req.params.username || req.body.username || req.query.username;
 
     if (!(user && (user.isAdmin || user.username === requestUsername))) {
       throw new UnauthorizedError();
