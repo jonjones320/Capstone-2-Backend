@@ -4,7 +4,7 @@
 
 const express = require("express");
 const router = new express.Router();
-const amadeus = require("../amadeus"); // Access the Amadeus SDK
+const amadeusClient = require("../amadeus"); // Access the Amadeus SDK
 const { BadRequestError } = require("../expressError");
 const { ensureCorrectUserOrAdmin, 
         ensureAdmin, 
@@ -93,25 +93,71 @@ router.get("/offers", async function (req, res, next) {
       adults
     } = req.query;
 
-    // Prepare data for Amadeus flight search
-    const flightSearchParams = {
-      originLocationCode,
-      destinationLocationCode,
+    // Validate required parameters.
+    if (!originLocationCode || !destinationLocationCode || !departureDate) {
+      throw new BadRequestError("Missing required search parameters");
+    }
+
+    const searchParams = {
+      originLocationCode: originLocationCode.toUpperCase(),
+      destinationLocationCode: destinationLocationCode.toUpperCase(),
       departureDate,
       returnDate,
-      adults
+      adults: Number(adults) || 1,
+      currencyCode: 'USD',
+      max: 20
     };
 
-    const response = await amadeus.shopping.flightOffersSearch.get(flightSearchParams);
+    try {
+      const response = await amadeusClient.searchFlights(searchParams);
 
-    if (response.result) {
-      return res.json(response.result);
-    } else {
-      throw new BadRequestError("No flights found");
+      if (response?.result?.data) {
+        return res.json(response.result);
+      } else {
+        return res.status(404).json({
+          error: {
+            message: "No flights found for the specified criteria",
+            code: "NO_FLIGHTS_FOUND",
+            status: 404
+          }
+        });
+      }
+    } catch (amadeusError) {
+      // Extract error details from Amadeus response.
+      const error = amadeusError.response?.result?.errors?.[0] || {};
+      const status = error.status || 500;
+      const code = error.code || 'UNKNOWN_ERROR';
+
+      // Create user-friendly error message.
+      let message = "An error occurred while searching for flights";
+      switch (code) {
+        case 141:
+          message = "The flight search service is temporarily unavailable. Please try again in a few minutes.";
+          break;
+        case 4926:
+          message = "No flights available for these dates and locations.";
+          break;
+        case 572:
+          message = "Please check your travel dates and try again.";
+          break;
+        case 575:
+          message = "Please check your airport codes and try again.";
+          break;
+        default:
+          message = error.detail || error.title || message;
+      }
+
+      return res.status(status).json({
+        error: {
+          message,
+          code,
+          status,
+          details: process.env.NODE_ENV === 'development' ? error : undefined
+        }
+      });
     }
   } catch (error) {
-    console.error("Error fetching flight offers", error);
-    return res.status(500).json({ error: error.message });
+    next(error);
   }
 });
 
