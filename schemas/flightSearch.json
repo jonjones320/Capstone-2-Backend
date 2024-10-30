@@ -3,22 +3,38 @@
   "$id": "http://ranner.com/flightSearch.schema.json",
   "type": "object",
   "properties": {
-    "flightNumber": {
+    "originLocationCode": {
       "type": "string",
-      "minLength": 1
+      "pattern": "^[A-Z]{3}$",
+      "description": "IATA airport code for origin"
     },
-    "tripId": {
+    "destinationLocationCode": {
       "type": "string",
-      "minLength": 1
+      "pattern": "^[A-Z]{3}$",
+      "description": "IATA airport code for destination"
     },
-    "originCode": {
+    "departureDate": {
       "type": "string",
-      "minLength": 1
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Departure date in YYYY-MM-DD format"
     },
-    "destinationCode": {
+    "returnDate": {
       "type": "string",
-      "minLength": 1
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Return date in YYYY-MM-DD format"
+    },
+    "adults": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9,
+      "description": "Number of adult passengers"
+    },
+    "currencyCode": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "default": "USD"
     }
   },
+  "required": ["originLocationCode", "destinationLocationCode", "departureDate"],
   "additionalProperties": false
 }
