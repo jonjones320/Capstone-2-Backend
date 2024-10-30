@@ -1,5 +1,3 @@
-// Amadeus API SDK initialization
-
 const Amadeus = require("amadeus");
 require("dotenv").config();
 
@@ -10,48 +8,19 @@ class AmadeusClient {
   }
 
   initializeClient() {
+    if (!process.env.AMADEUS_CLIENT_ID || !process.env.AMADEUS_CLIENT_SECRET) {
+      throw new Error('Missing Amadeus API credentials in environment variables');
+    }
+
     try {
       this.client = new Amadeus({
         clientId: process.env.AMADEUS_CLIENT_ID,
         clientSecret: process.env.AMADEUS_CLIENT_SECRET,
         hostname: 'test',
-        logger: {
-          log: (message, data) => console.log(`[Amadeus] ${message}`, data),
-          error: (message, data) => console.error(`[Amadeus Error] ${message}`, data),
-          debug: (message, data) => console.debug(`[Amadeus Debug] ${message}`, data)
-        }
+        logLevel: 'debug'  // Enable detailed logging.
       });
 
-      // Add request interceptor to monitor traffic.
-      this.client.client.interceptors.request.use(
-        config => {
-          console.log('[Amadeus] Making request:', {
-            method: config.method,
-            url: config.url,
-            params: config.params
-          });
-          return config;
-        },
-        error => {
-          console.error('[Amadeus] Request Error:', error);
-          return Promise.reject(error);
-        }
-      );
-
-      // Add response interceptor to monitor or handle responses.
-      this.client.client.interceptors.response.use(
-        response => {
-          console.log('[Amadeus] Response received:', {
-            status: response.status,
-            data: response.data
-          });
-          return response;
-        },
-        error => {
-          console.error('[Amadeus] Response Error:', error?.response?.data || error);
-          return Promise.reject(error);
-        }
-      );
+      console.log('[Amadeus] Client initialized successfully');
 
     } catch (error) {
       console.error("Failed to initialize Amadeus client:", error);
@@ -67,18 +36,38 @@ class AmadeusClient {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         console.log(`[Amadeus] Searching flights (attempt ${attempt}/${maxRetries})`, params);
+        
+        // Ensure the client is initialized.
+        if (!this.client) {
+          this.initializeClient();
+        }
+        
         const response = await this.client.shopping.flightOffersSearch.get(params);
+        console.log(`[Amadeus] Flight search successful on attempt ${attempt}`);
+        
         return response;
       } catch (error) {
         lastError = error;
-        console.error(`[Amadeus] Flight search attempt ${attempt} failed:`, error?.response?.data || error);
+        console.error(`[Amadeus] Flight search attempt ${attempt} failed:`, {
+          status: error?.response?.status,
+          code: error?.response?.data?.errors?.[0]?.code,
+          message: error?.response?.data?.errors?.[0]?.detail || error.message
+        });
         
-        // Only retry on specific error codes
-        if (error?.response?.data?.errors?.[0]?.code === 141) {
+        // Only retry on specific error codes.
+        if (error?.response?.data?.errors?.[0]?.code === 141 || 
+            error?.response?.status === 401) {  // Retry on unauthorized (token expired).
           if (attempt < maxRetries) {
-            const delay = attempt * 1000; // Increasing delay between retries
+            const delay = attempt * 1000; // Increasing delay between retries.
             console.log(`[Amadeus] Waiting ${delay}ms before retry...`);
             await new Promise(resolve => setTimeout(resolve, delay));
+            
+            // If unauthorized, try to reinitialize the client.
+            if (error?.response?.status === 401) {
+              console.log('[Amadeus] Reinitializing client due to authentication error');
+              this.initializeClient();
+            }
+            
             continue;
           }
         }
@@ -88,8 +77,29 @@ class AmadeusClient {
 
     throw lastError;
   }
+
+  // Helper method to format error messages.
+  formatErrorMessage(error) {
+    const amadeusError = error.response?.data?.errors?.[0];
+    if (!amadeusError) {
+      return "An unknown error occurred";
+    }
+
+    switch (amadeusError.code) {
+      case 141:
+        return "The flight search service is temporarily unavailable. Please try again in a few minutes.";
+      case 4926:
+        return "No flights available for these dates and locations.";
+      case 572:
+        return "Please check your travel dates and try again.";
+      case 575:
+        return "Please check your airport codes and try again.";
+      default:
+        return amadeusError.detail || amadeusError.title || "An error occurred while searching for flights";
+    }
+  }
 }
 
-// Create and export a single instance.
+// Create and export a singleton instance
 const amadeusClient = new AmadeusClient();
 module.exports = amadeusClient;
