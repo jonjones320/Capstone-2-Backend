@@ -4,7 +4,7 @@
 
 const express = require("express");
 const router = new express.Router();
-const amadeusClient = require("../amadeus"); // Access the Amadeus SDK
+const amadeus = require("../amadeus"); // Access the Amadeus SDK
 const { BadRequestError } = require("../expressError");
 const { ensureCorrectUserOrAdmin, 
         ensureAdmin, 
@@ -106,7 +106,7 @@ router.get("/offers", validateFlightSearch, async function (req, res, next) {
     };
 
     try {
-      const response = await amadeusClient.searchFlights(searchParams);
+      const response = await amadeus.searchFlights(searchParams);
       console.log("Flight.js - response: ", response);
       if (response?.result?.data && Array.isArray(response.result.data)) {
         console.log(`Found ${response.result.data.length} flight offers`);
