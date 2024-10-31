@@ -84,6 +84,7 @@ router.delete('/:id', authenticateJWT, ensureCorrectUserOrAdmin, async (req, res
 
 // GET Flight Offers Search
 router.get("/offers", validateFlightSearch, async function (req, res, next) {
+  console.log("Flights.js - req.query: ", req.query);
   try {
     const { 
       originLocationCode, 
@@ -106,7 +107,7 @@ router.get("/offers", validateFlightSearch, async function (req, res, next) {
 
     try {
       const response = await amadeusClient.searchFlights(searchParams);
-
+      console.log("Flight.js - response: ", response);
       if (response?.result?.data && Array.isArray(response.result.data)) {
         console.log(`Found ${response.result.data.length} flight offers`);
         return res.json(response.result);
