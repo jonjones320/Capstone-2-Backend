@@ -5,6 +5,12 @@
 const express = require("express");
 const router = new express.Router();
 const amadeus = require("../amadeus"); // Access the Amadeus SDK
+console.log("In flights.js - Amadeus import:", {
+  exists: !!amadeus,
+  type: typeof amadeus,
+  hasClient: amadeus?.client ? true : false,
+  methods: Object.keys(amadeus || {})
+});
 const { BadRequestError } = require("../expressError");
 const { ensureCorrectUserOrAdmin, 
         ensureAdmin, 

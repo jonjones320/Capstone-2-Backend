@@ -102,4 +102,10 @@ class AmadeusClient {
 
 // Create and export a singleton instance
 const amadeus = new AmadeusClient();
+console.log("In amadeus.js - Created instance:", {
+  exists: !!amadeus,
+  type: typeof amadeus,
+  hasClient: amadeus?.client ? true : false,
+  methods: Object.keys(amadeus || {})
+});
 module.exports = amadeus;
