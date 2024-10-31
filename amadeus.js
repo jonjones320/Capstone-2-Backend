@@ -101,5 +101,5 @@ class AmadeusClient {
 }
 
 // Create and export a singleton instance
-const amadeusClient = new AmadeusClient();
-module.exports = amadeusClient;
+const amadeus = new AmadeusClient();
+module.exports = amadeus;
