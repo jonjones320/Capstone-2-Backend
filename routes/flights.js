@@ -5,20 +5,11 @@
 const express = require("express");
 const router = new express.Router();
 const amadeus = require("../amadeus"); // Access the Amadeus SDK
-console.log("In flights.js - Amadeus import:", {
-  exists: !!amadeus,
-  type: typeof amadeus,
-  hasClient: amadeus?.client ? true : false,
-  methods: Object.keys(amadeus || {})
-});
-const { BadRequestError } = require("../expressError");
-const { ensureCorrectUserOrAdmin, 
-        ensureAdmin, 
+const { ensureCorrectUserOrAdmin,  
         ensureLoggedIn, 
         authenticateJWT 
       } = require("../middleware/auth");
 const { validateFlightNew, 
-        validateFlightUpdate, 
         validateFlightSearch 
       } = require('../middleware/validateSchema');
 const formatDate = require("../helpers/date");
@@ -90,7 +81,6 @@ router.delete('/:id', authenticateJWT, ensureCorrectUserOrAdmin, async (req, res
 
 // GET Flight Offers Search
 router.get("/offers", validateFlightSearch, async function (req, res, next) {
-  console.log("3 - Flights.js - req.query: ", req.query);
   try {
     const { 
       originLocationCode, 
@@ -100,50 +90,24 @@ router.get("/offers", validateFlightSearch, async function (req, res, next) {
       adults = 1 
     } = req.query;
 
-    // Prepare the search params.
-    const searchParams = {
+    const response = await amadeus.shopping.flightOffersSearch.get({
       originLocationCode: originLocationCode.toUpperCase(),
       destinationLocationCode: destinationLocationCode.toUpperCase(),
-      departureDate,
-      returnDate,
+      departureDate: formatDate(departureDate),
+      returnDate: formatDate(returnDate),
       adults: Number(adults),
       currencyCode: 'USD',
       max: 20
-    };
+    });
 
-    try {
-      const response = await amadeus.searchFlights(searchParams);
-      console.log("Flight.js - response: ", response);
-      if (response?.result?.data && Array.isArray(response.result.data)) {
-        console.log(`Found ${response.result.data.length} flight offers`);
-        return res.json(response.result);
-      } else {
-        return res.status(404).json({
-          error: {
-            message: "No flights found for these search criteria",
-            code: "NO_FLIGHTS_FOUND",
-            status: 404
-          }
-        });
+    return res.json(response.data.length ? response : { 
+      error: { 
+        message: "No flights found for these search criteria",
+        status: 404 
       }
-    } catch (amadeusError) {
-      // Extract error details from Amadeus response.
-      const error = amadeusError.response?.result?.errors?.[0] || {};
-      const status = error.status || 500;
-      const code = error.code || 'UNKNOWN_ERROR';
-
-      return res.status(status).json({
-        error: {
-          message: error.detail || "An error occurred while searching for flights",
-          code,
-          status,
-          details: process.env.NODE_ENV === 'development' ? error : undefined
-        }
-      });
-    }
-  } catch (error) {
-    console.error("Flight search route error:", error);
-    return next(error);
+    });
+  } catch (err) {
+    return next(err);
   }
 });
 
