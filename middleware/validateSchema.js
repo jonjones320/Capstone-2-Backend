@@ -16,7 +16,7 @@ const flightSearchSchema = require('../schemas/flightSearch.json');
 const validateSchema = (schema) => {
   return (req, res, next) => {
     const validate = ajv.compile(schema);
-    console.log('Validation req.body: ', req.body);
+    console.log('Validation req.body: ', req);
     const valid = validate(req.body);
     console.log('Validation result:', { 
       valid, 
