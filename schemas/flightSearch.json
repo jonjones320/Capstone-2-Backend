@@ -5,12 +5,12 @@
   "properties": {
     "originLocationCode": {
       "type": "string",
-      "pattern": "^[A-Z]{3}$",
+      "pattern": "^[A-Za-z]{3}$",
       "description": "IATA airport code for origin"
     },
     "destinationLocationCode": {
       "type": "string",
-      "pattern": "^[A-Z]{3}$",
+      "pattern": "^[A-Za-z]{3}$",
       "description": "IATA airport code for destination"
     },
     "departureDate": {
@@ -24,14 +24,15 @@
       "description": "Return date in YYYY-MM-DD format"
     },
     "adults": {
-      "type": "integer",
+      "type": ["string", "integer"],
+      "pattern": "^[1-9]$",
       "minimum": 1,
       "maximum": 9,
       "description": "Number of adult passengers"
     },
     "currencyCode": {
       "type": "string",
-      "pattern": "^[A-Z]{3}$",
+      "pattern": "^[A-Za-z]{3}$",
       "default": "USD"
     }
   },
