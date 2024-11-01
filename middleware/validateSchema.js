@@ -17,7 +17,10 @@ const validateSchema = (schema) => {
   return (req, res, next) => {
     const validate = ajv.compile(schema);
     const valid = validate(req.body);
-    console.log("ValidateSchema - valid: ", valid);
+    console.log('Validation result:', { 
+      valid, 
+      errors: validate.errors 
+    });
 
     if (!valid) {
       const errors = validate.errors.map(err => `${err.instancePath} ${err.message}`).join(', ');
