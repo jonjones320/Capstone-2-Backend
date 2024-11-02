@@ -89,7 +89,7 @@ router.get("/offers", validateFlightSearch, async function (req, res, next) {
       returnDate, 
       adults = 1 
     } = req.query;
-    console.log("flights.js - /offers - data: ", originLocationCode, destinationLocationCode, departureDate, returnDate, passengers);
+    console.log("flights.js - /offers - data: ", originLocationCode, destinationLocationCode, departureDate, returnDate, adults);
 
     const response = await amadeus.shopping.flightOffersSearch.get({
       originLocationCode: originLocationCode.toUpperCase(),
