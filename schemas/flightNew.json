@@ -6,9 +6,17 @@
     "tripId": {
       "type": "integer"
     },
+    "amadeusOrderId": {
+      "type": "string"
+    },
     "flightDetails": {
       "type": "object",
-      "required": ["type", "id"]
+      "properties": {
+        "id": {
+          "type": ["string", "number"]
+        }
+      },
+      "additionalProperties": true
     }
   },
   "required": ["tripId", "flightDetails"]
