@@ -1,3 +1,7 @@
+require("dotenv").config();
+const Amadeus = require("amadeus");
+
+
 class AmadeusClient {
   constructor() {
     this.client = null;
