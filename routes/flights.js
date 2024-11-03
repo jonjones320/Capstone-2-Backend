@@ -82,7 +82,7 @@ router.delete('/:id', authenticateJWT, ensureCorrectUserOrAdmin, async (req, res
 
 
 // GET Flight Offers from Origin to Destination w/ dates & passengers.
-router.get("/offers", validateFlightSearch, async function (req, res, next) {
+router.get("/offers", async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightOffersSearch.get({
       originLocationCode: req.query.originLocationCode.toUpperCase(),
