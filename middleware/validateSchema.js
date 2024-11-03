@@ -15,18 +15,30 @@ const flightSearchSchema = require('../schemas/flightSearch.json');
 
 const validateSchema = (schema) => {
   return (req, res, next) => {
+    // Combine data from authenticated user context with request data.
+    const dataToValidate = {
+      ...req.body,
+      ...req.query,
+      // Include username from authenticated user context.
+      username: res.locals.user?.username
+    };
+
     const validate = ajv.compile(schema);
-    const fields = req.query || req.body;
-    const valid = validate(fields);
+    const valid = validate(dataToValidate);
+    
     console.log('Validation result:', { 
       valid, 
-      errors: validate.errors 
+      errors: validate.errors,
+      dataToValidate 
     });
 
     if (!valid) {
       const errors = validate.errors.map(err => `${err.instancePath} ${err.message}`).join(', ');
-      return res.status(400).json({ error: `Validation failed with request data: ${errors}` });
+      return res.status(400).json({ error: `Validation failed: ${errors}` });
     }
+    
+    // Add validated data back to request for use in route handlers.
+    req.validatedData = dataToValidate;
     next();
   };
 };
