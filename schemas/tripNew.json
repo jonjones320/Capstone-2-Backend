@@ -36,7 +36,6 @@
   },
   "additionalProperties": false,
   "required": [
-    "name",
     "username",
     "origin",
     "destination",
