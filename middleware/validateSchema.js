@@ -24,7 +24,7 @@ const validateSchema = (schema) => {
 
     if (!valid) {
       const errors = validate.errors.map(err => `${err.instancePath} ${err.message}`).join(', ');
-      return res.status(400).json({ error: `Invalid request data: ${errors}` });
+      return res.status(400).json({ error: `Validation failed with request data: ${errors}` });
     }
     next();
   };
