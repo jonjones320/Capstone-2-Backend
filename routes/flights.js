@@ -81,7 +81,7 @@ router.delete('/:id', authenticateJWT, ensureCorrectUserOrAdmin, async (req, res
 /**                         */
 
 
-// Updated Flight Search
+// GET Flight Offers from Origin to Destination w/ dates & passengers.
 router.get("/offers", validateFlightSearch, async function (req, res, next) {
   try {
     // Destructure the request keys.
