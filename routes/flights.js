@@ -80,71 +80,11 @@ router.delete('/:id', authenticateJWT, ensureCorrectUserOrAdmin, async (req, res
 /** AMADEUS FLIGHT ENDPOINTS */
 /**                         */
 
-// GET Flight Offers Search
-// router.get("/offers", validateFlightSearch, async function (req, res, next) {
-//   console.debug("Flight search request:", req.query);
-  
-//   try {
-//     // Destructure the request.
-//     const { 
-//       originLocationCode, 
-//       destinationLocationCode, 
-//       departureDate, 
-//       returnDate, 
-//       adults = 1 
-//     } = req.query;
-
-//     // Prepare the search params.
-//     const searchParams = {
-//       originLocationCode: originLocationCode.toUpperCase(),
-//       destinationLocationCode: destinationLocationCode.toUpperCase(),
-//       departureDate: formatDate(departureDate),
-//       returnDate: formatDate(returnDate),
-//       adults: Number(adults),
-//       currencyCode: 'USD',
-//       max: 20
-//     };
-
-//     try {
-//       const response = await amadeus.client.shopping.flightOffersSearch.get(searchParams);
-      
-//       console.debug(`Found ${response.result.data?.length || 0} flight offers`);
-      
-//       if (response?.result?.data && Array.isArray(response.result.data)) {
-//         return res.json(response.result);
-//       } else {
-//         return res.status(404).json({
-//           error: {
-//             message: "No flights found for these search criteria",
-//             code: "NO_FLIGHTS_FOUND",
-//             status: 404
-//           }
-//         });
-//       }
-//     } catch (amadeusError) {
-//       // Extract error details from Amadeus response.
-//       const error = amadeusError.response?.result?.errors?.[0] || {};
-//       const status = error.status || 500;
-//       const code = error.code || 'UNKNOWN_ERROR';
-
-//       return res.status(status).json({
-//         error: {
-//           message: error.detail || "An error occurred while searching for flights",
-//           code,
-//           status,
-//           details: process.env.NODE_ENV === 'development' ? error : undefined
-//         }
-//       });
-//     }
-//   } catch (error) {
-//     console.error("Flight search route error:", error);
-//     return next(error);
-//   }
-// });
 
 // Updated Flight Search
 router.get("/offers", validateFlightSearch, async function (req, res, next) {
   try {
+    // Destructure the request keys.
     const { 
       originLocationCode, 
       destinationLocationCode, 
@@ -153,6 +93,7 @@ router.get("/offers", validateFlightSearch, async function (req, res, next) {
       adults = 1 
     } = req.query;
 
+    // Send request object with formatted key-values. 
     const response = await amadeus.shopping.flightOffersSearch.get({
       originLocationCode: originLocationCode.toUpperCase(),
       destinationLocationCode: destinationLocationCode.toUpperCase(),
@@ -161,6 +102,7 @@ router.get("/offers", validateFlightSearch, async function (req, res, next) {
       adults: Number(adults)
     });
 
+    // Handles response received; either with or w/o flights.
     if (response.data) {
       return res.json({ data: response.data });
     } else {
