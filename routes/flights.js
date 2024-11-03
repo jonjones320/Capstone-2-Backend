@@ -84,39 +84,17 @@ router.delete('/:id', authenticateJWT, ensureCorrectUserOrAdmin, async (req, res
 // GET Flight Offers from Origin to Destination w/ dates & passengers.
 router.get("/offers", validateFlightSearch, async function (req, res, next) {
   try {
-    // Destructure the request keys.
-    const { 
-      originLocationCode, 
-      destinationLocationCode, 
-      departureDate, 
-      returnDate, 
-      adults = 1 
-    } = req.query;
-
-    // Send request object with formatted key-values. 
     const response = await amadeus.shopping.flightOffersSearch.get({
-      originLocationCode: originLocationCode.toUpperCase(),
-      destinationLocationCode: destinationLocationCode.toUpperCase(),
-      departureDate: formatDate(departureDate),
-      returnDate: formatDate(returnDate),
-      adults: Number(adults)
+      originLocationCode: req.query.originLocationCode.toUpperCase(),
+      destinationLocationCode: req.query.destinationLocationCode.toUpperCase(),
+      departureDate: formatDate(req.query.departureDate),
+      returnDate: formatDate(req.query.returnDate),
+      adults: Number(req.query.adults) || 1
     });
 
-    // Handles response received; either with or w/o flights.
-    if (response.data) {
-      return res.json({ data: response.data });
-    } else {
-      return res.status(404).json({
-        error: "No flights found for these search criteria"
-      });
-    }
-
+    return res.json(response.result);
   } catch (error) {
-    // Simple error handling that surfaces Amadeus errors.
-    const amadeusError = error.response?.data?.errors?.[0];
-    return res.status(error.response?.status || 500).json({
-      error: amadeusError?.detail || "Failed to search flights"
-    });
+    return next(error);
   }
 });
 
