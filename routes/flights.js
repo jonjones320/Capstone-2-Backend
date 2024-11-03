@@ -144,8 +144,6 @@ router.delete('/:id', authenticateJWT, ensureCorrectUserOrAdmin, async (req, res
 
 // Updated Flight Search
 router.get("/offers", validateFlightSearch, async function (req, res, next) {
-  console.debug("Flight search request:", req.query);
-  
   try {
     const { 
       originLocationCode, 
@@ -155,105 +153,27 @@ router.get("/offers", validateFlightSearch, async function (req, res, next) {
       adults = 1 
     } = req.query;
 
-    // Format dates for Amadeus API (YYYY-MM-DD)
-    const searchParams = {
+    const response = await amadeus.shopping.flightOffersSearch.get({
       originLocationCode: originLocationCode.toUpperCase(),
       destinationLocationCode: destinationLocationCode.toUpperCase(),
       departureDate: formatDate(departureDate),
       returnDate: formatDate(returnDate),
-      adults: Number(adults),
-      currencyCode: 'USD',
-      max: 20,
-      // Add these parameters to help with test environment
-      nonStop: false,
-      maxResults: 250
-    };
-
-    console.debug("Amadeus search params:", searchParams);
-
-    let retryCount = 0;
-    const maxRetries = 3;
-    let lastError = null;
-
-    while (retryCount < maxRetries) {
-      try {
-        const response = await amadeus.client.shopping.flightOffersSearch.get(searchParams);
-        
-        if (response?.result?.data && Array.isArray(response.result.data)) {
-          console.debug(`Found ${response.result.data.length} flight offers`);
-          return res.json(response.result);
-        } else {
-          return res.status(404).json({
-            error: {
-              message: "No flights found for these search criteria",
-              code: "NO_FLIGHTS_FOUND",
-              status: 404
-            }
-          });
-        }
-      } catch (error) {
-        lastError = error;
-        const amadeusError = error.response?.result?.errors?.[0];
-        
-        // Handle specific error codes
-        if (amadeusError?.code === 141) {
-          console.debug(`Amadeus system error (attempt ${retryCount + 1}/${maxRetries})`);
-          retryCount++;
-          if (retryCount < maxRetries) {
-            // Wait before retrying (exponential backoff)
-            await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000));
-            continue;
-          }
-        }
-
-        // If we get here, either it's not a 141 error or we're out of retries
-        throw error;
-      }
-    }
-
-    // If we get here, we've exhausted our retries
-    throw lastError;
-
-  } catch (error) {
-    const amadeusError = error.response?.result?.errors?.[0];
-    console.error("Flight search error:", {
-      code: amadeusError?.code,
-      status: amadeusError?.status,
-      title: amadeusError?.title,
-      detail: amadeusError?.detail
+      adults: Number(adults)
     });
 
-    // Map error codes to appropriate responses
-    let status = 500;
-    let message = "An error occurred while searching for flights";
-
-    if (amadeusError) {
-      switch (amadeusError.code) {
-        case 141:
-          status = 503;
-          message = "The flight search service is temporarily unavailable. Please try again in a few moments.";
-          break;
-        case 425:
-          status = 400;
-          message = "Invalid date format or dates in the past";
-          break;
-        case 4926:
-          status = 404;
-          message = "No flights available for these dates and locations";
-          break;
-        default:
-          status = amadeusError.status || 500;
-          message = amadeusError.detail || message;
-      }
+    if (response.data) {
+      return res.json({ data: response.data });
+    } else {
+      return res.status(404).json({
+        error: "No flights found for these search criteria"
+      });
     }
 
-    return res.status(status).json({
-      error: {
-        message,
-        code: amadeusError?.code,
-        status,
-        detail: amadeusError?.detail
-      }
+  } catch (error) {
+    // Simple error handling that surfaces Amadeus errors.
+    const amadeusError = error.response?.data?.errors?.[0];
+    return res.status(error.response?.status || 500).json({
+      error: amadeusError?.detail || "Failed to search flights"
     });
   }
 });
