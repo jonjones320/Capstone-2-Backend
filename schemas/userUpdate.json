@@ -3,6 +3,11 @@
   "$id": "http://ranner.com/userUpdate.json",
   "type": "object",
   "properties": {
+    "password": {
+      "type": "string",
+      "minLength": 7,
+      "maxLength": 20
+    },
     "firstName": {
       "type": "string",
       "minLength": 1,
