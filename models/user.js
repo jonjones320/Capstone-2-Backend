@@ -144,16 +144,16 @@ class User {
   /** Update user data with `data`.
    *
    * This is a "partial update" --- it's fine if data doesn't contain
-   * all the fields; this only changes provided ones.
+   * all the fields; this only changes provided fields.
    *
    * Data can include:
-   *   { firstName, lastName, password, email, isAdmin }
+   *   { firstName, lastName, email, isAdmin }
    *
    * Returns { username, firstName, lastName, email, isAdmin }
    *
    * Throws NotFoundError if not found.
    *
-   * WARNING: this function can set a new password or make a user an admin.
+   * WARNING: this function can make a user an admin.
    * Callers of this function must be certain they have validated inputs to this
    * or a serious security risks are opened.
    */
