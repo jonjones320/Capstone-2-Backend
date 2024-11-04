@@ -159,17 +159,22 @@ class User {
    */
 
   static async update(username, data) {
-    if (data.password) {
+    // If changing password, verify current password first
+    if (data.password && data.currentPassword) {
+      await User.authenticate(username, data.currentPassword);
       data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
     }
-
+  
+    // Remove currentPassword from data before update.
+    const { currentPassword, ...dataToUpdate } = data;
+  
     const { setCols, values } = sqlForPartialUpdate(
-        data,
-        {
-          firstName: "first_name",
-          lastName: "last_name",
-          isAdmin: "is_admin",
-        });
+      dataToUpdate,
+      {
+        firstName: "first_name",
+        lastName: "last_name",
+        isAdmin: "is_admin",
+      });
     const usernameVarIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE users 
