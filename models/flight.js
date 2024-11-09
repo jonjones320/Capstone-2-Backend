@@ -65,11 +65,7 @@ class Flight {
     }
     query += " ORDER BY id";
   
-    console.log("Executing SQL query:", query);
-    console.log("Query values:", queryValues);
-  
     const flightsRes = await db.query(query, queryValues);
-    console.log("flight.js - findAll - flightsRes: ", flightsRes);
     return flightsRes.rows;
   }
 

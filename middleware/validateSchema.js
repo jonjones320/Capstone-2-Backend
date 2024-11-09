@@ -25,12 +25,6 @@ const validateSchema = (schema) => {
 
     const validate = ajv.compile(schema);
     const valid = validate(dataToValidate);
-    
-    console.log('Validation result:', { 
-      valid, 
-      errors: validate.errors,
-      dataToValidate 
-    });
 
     if (!valid) {
       const errors = validate.errors.map(err => `${err.instancePath} ${err.message}`).join(', ');

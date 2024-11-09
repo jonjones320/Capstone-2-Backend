@@ -30,7 +30,6 @@ router.post('/', authenticateJWT, ensureLoggedIn, validateFlightNew, async (req,
 // GET Search flights with filters
 router.get('/', ensureLoggedIn, async (req, res, next) => {
   try {
-    console.log("flight.js - filters: ", req.query);
     const filters = {
       id : req.query.id,
       tripId : req.query.tripId
@@ -39,7 +38,6 @@ router.get('/', ensureLoggedIn, async (req, res, next) => {
     let flights;
     try {
       flights = await Flight.findAll(filters);
-      console.log("flight.js - flights: ", flights);
       
       if (flights.length === 0) {
         return res.status(404).json({ error: "No flight found with the given ID" });
