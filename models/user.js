@@ -46,11 +46,7 @@ class User {
       }
     }
 
-    // Different error messages based on context.
-    const message = isUpdateCheck 
-    ? "Current password is incorrect" 
-    : "Invalid username/password";
-    throw new UnauthorizedError(message);
+    throw new UnauthorizedError("Invalid username/password");
   }
 
   /** Register user with data.
@@ -165,7 +161,7 @@ class User {
   static async update(username, data) {
     // If changing password, verify current password first
     if (data.password && data.currentPassword) {
-      await User.authenticate(username, data.currentPassword, true);  // Pass true for isUpdateCheck.
+      await User.authenticate(username, data.currentPassword);
       data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
     }
   
