@@ -35,5 +35,5 @@
     }
   },
   "required": ["originLocationCode", "destinationLocationCode", "departureDate"],
-  "additionalProperties": false
+  "additionalProperties": true
 }
