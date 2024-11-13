@@ -149,7 +149,7 @@ router.get("/dates", validateFlightSearch, async function (req, res, next) {
 
 // POST Flight Offers Search //
 // Creates an Amadeus order for a flight.
-router.post("/offers", validateFlightSearch, async function (req, res, next) {
+router.post("/offers", async function (req, res, next) {
   try {
     const response = await amadeus.shopping.flightOffersSearch.post(JSON.stringify(req.body));
     return res.json(response.data);
